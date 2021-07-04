@@ -15,28 +15,97 @@
 #===========================================
 # set io standard
 #===========================================
-set_property IOSTANDARD LVCMOS33 [get_ports]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_0]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_1]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_10]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_11]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_12]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_13]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_14]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_15]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_16]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_17]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_18]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_19]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_2]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_20]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_21]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_22]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_23]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_24]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_25]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_26]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_27]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_28]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_29]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_3]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_30]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_31]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_4]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_5]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_6]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_7]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_8]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_GPIO_9]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_JTAG_TCLK]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_JTAG_TMS]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_MCURST]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH0]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH1]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH10]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH11]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH2]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH3]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH4]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH5]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH6]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH7]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH8]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_CH9]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_PWM_FAULT]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI0_NSS]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI0_SCLK]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI0_SD0]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI0_SD1]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI1_NSS]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI1_SCLK]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI1_SD0]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI1_SD1]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI2_NSS]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI2_SCLK]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI2_SD0]
+set_property IOSTANDARD LVCMOS33 [get_ports PAD_USI2_SD1]
+set_property IOSTANDARD LVCMOS33 [get_ports sys_clk]
+set_property IOSTANDARD LVCMOS33 [get_ports POUT_EHS]
 
 
 #===========================================
 # Create clock
 #===========================================
-#create_clock  -period 50.00 -name MAIN_CLK [get_ports PIN_EHS]
+
+
 
 #===========================================
 # Global clock and reset source
 #===========================================
-set_property PACKAGE_PIN B17   [get_ports PIN_EHS];     # 20 MHz
+set_property PACKAGE_PIN E3 [get_ports sys_clk]
 #set_property PACKAGE_PIN E19   [get_ports OSC_CLK_48M]     # 48 MHz
-set_property PACKAGE_PIN W11   [get_ports PAD_MCURST];         # K1
+set_property PACKAGE_PIN C12 [get_ports PAD_MCURST]
 #set_property PACKAGE_PIN Y11   [get_ports {gpio0_port[0]}];         # K2
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets PAD_JTAG_TCLK_c]
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets PAD_JTAG_TCLK_c]
 
 #===========================================
 # C-SKY  JTAG interface: J8
 #===========================================
-set_property PACKAGE_PIN AA15  [get_ports PAD_JTAG_TCLK]
-set_property PACKAGE_PIN P14  [get_ports PAD_JTAG_TMS]
+
+
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets PAD_JTAG_TCLK]
+
+
+
+
+set_property PACKAGE_PIN C17 [get_ports PAD_JTAG_TCLK]
+set_property PACKAGE_PIN D18 [get_ports PAD_JTAG_TMS]
 #set_property PACKAGE_PIN V13  [get_ports JTAG_TDI]
 #set_property PACKAGE_PIN V14  [get_ports JTAG_TDO]
 #set_property PACKAGE_PIN W15  [get_ports i_pad_jtg_trst_b]
@@ -115,44 +184,45 @@ set_property PACKAGE_PIN P14  [get_ports PAD_JTAG_TMS]
 #set_property PACKAGE_PIN L4    [get_ports {mmc_addr[22]}]
 
 #===========================================
-# YOC SOCKET 1
+# YOC SOCKET 1//leds
 #===========================================
-set_property PACKAGE_PIN T15    [get_ports PAD_GPIO_0]
-set_property PACKAGE_PIN P15    [get_ports PAD_GPIO_1]
-set_property PACKAGE_PIN U15    [get_ports PAD_GPIO_2]
-set_property PACKAGE_PIN AA16   [get_ports PAD_GPIO_3]
-set_property PACKAGE_PIN Y16    [get_ports PAD_GPIO_4]
-set_property PACKAGE_PIN R16    [get_ports PAD_GPIO_5]
-set_property PACKAGE_PIN AB16   [get_ports PAD_GPIO_6]
-set_property PACKAGE_PIN P16    [get_ports PAD_GPIO_7]
-set_property PACKAGE_PIN R17    [get_ports PAD_GPIO_8]
-set_property PACKAGE_PIN U16    [get_ports PAD_GPIO_9]
-set_property PACKAGE_PIN V17    [get_ports PAD_GPIO_10]
-set_property PACKAGE_PIN T16    [get_ports PAD_GPIO_11]
-set_property PACKAGE_PIN P17    [get_ports PAD_GPIO_12]
-set_property PACKAGE_PIN W16    [get_ports PAD_GPIO_13]
-set_property PACKAGE_PIN Y17    [get_ports PAD_GPIO_14]
-set_property PACKAGE_PIN U17    [get_ports PAD_GPIO_15]
-set_property PACKAGE_PIN T18    [get_ports PAD_GPIO_16]
-set_property PACKAGE_PIN R18    [get_ports PAD_GPIO_17]
-set_property PACKAGE_PIN W17    [get_ports PAD_GPIO_18]
-                                           
+set_property PACKAGE_PIN H17 [get_ports PAD_GPIO_0]
+set_property PACKAGE_PIN K15 [get_ports PAD_GPIO_1]
+set_property PACKAGE_PIN J13 [get_ports PAD_GPIO_2]
+set_property PACKAGE_PIN N14 [get_ports PAD_GPIO_3]
+set_property PACKAGE_PIN R18 [get_ports PAD_GPIO_4]
+set_property PACKAGE_PIN V17 [get_ports PAD_GPIO_5]
+set_property PACKAGE_PIN U17 [get_ports PAD_GPIO_6]
+set_property PACKAGE_PIN U16 [get_ports PAD_GPIO_7]
+set_property PACKAGE_PIN V16 [get_ports PAD_GPIO_8]
+set_property PACKAGE_PIN T15 [get_ports PAD_GPIO_9]
+set_property PACKAGE_PIN U14 [get_ports PAD_GPIO_10]
+set_property PACKAGE_PIN T16 [get_ports PAD_GPIO_11]
+set_property PACKAGE_PIN V15 [get_ports PAD_GPIO_12]
+set_property PACKAGE_PIN V14 [get_ports PAD_GPIO_13]
+set_property PACKAGE_PIN V12 [get_ports PAD_GPIO_14]
+set_property PACKAGE_PIN V11 [get_ports PAD_GPIO_15]
+####.///Switchs
+set_property PACKAGE_PIN J15 [get_ports PAD_GPIO_16]
+set_property PACKAGE_PIN L16 [get_ports PAD_GPIO_17]
+set_property PACKAGE_PIN M13 [get_ports PAD_GPIO_18]
+
 #===========================================
 # YOC SOCKET 2
 #===========================================
-set_property PACKAGE_PIN AB17    [get_ports PAD_GPIO_19]
-set_property PACKAGE_PIN AB18    [get_ports PAD_GPIO_20]
-set_property PACKAGE_PIN Y18     [get_ports PAD_GPIO_21]
-set_property PACKAGE_PIN V18     [get_ports PAD_GPIO_22]
-set_property PACKAGE_PIN AA18    [get_ports PAD_GPIO_23]
-set_property PACKAGE_PIN AA19    [get_ports PAD_GPIO_24]
-set_property PACKAGE_PIN W19     [get_ports PAD_GPIO_25]
-set_property PACKAGE_PIN AA20    [get_ports PAD_GPIO_26]
-set_property PACKAGE_PIN W20     [get_ports PAD_GPIO_27]
-set_property PACKAGE_PIN V19     [get_ports PAD_GPIO_28]
-set_property PACKAGE_PIN U20     [get_ports PAD_GPIO_29]
-set_property PACKAGE_PIN AB20    [get_ports PAD_GPIO_30]
-set_property PACKAGE_PIN T20     [get_ports PAD_GPIO_31]
+set_property PACKAGE_PIN R15 [get_ports PAD_GPIO_19]
+set_property PACKAGE_PIN R17 [get_ports PAD_GPIO_20]
+set_property PACKAGE_PIN T18 [get_ports PAD_GPIO_21]
+set_property PACKAGE_PIN U18 [get_ports PAD_GPIO_22]
+set_property PACKAGE_PIN R13 [get_ports PAD_GPIO_23]
+set_property PACKAGE_PIN T8 [get_ports PAD_GPIO_24]
+set_property PACKAGE_PIN U8 [get_ports PAD_GPIO_25]
+set_property PACKAGE_PIN R16 [get_ports PAD_GPIO_26]
+set_property PACKAGE_PIN T13 [get_ports PAD_GPIO_27]
+set_property PACKAGE_PIN H6 [get_ports PAD_GPIO_28]
+set_property PACKAGE_PIN U12 [get_ports PAD_GPIO_29]
+set_property PACKAGE_PIN U11 [get_ports PAD_GPIO_30]
+set_property PACKAGE_PIN V10 [get_ports PAD_GPIO_31]
 #set_property PACKAGE_PIN V20     [get_ports ]
 #set_property PACKAGE_PIN U21     [get_ports ]
 #set_property PACKAGE_PIN W21     [get_ports ]
@@ -161,21 +231,21 @@ set_property PACKAGE_PIN T20     [get_ports PAD_GPIO_31]
 #set_property PACKAGE_PIN Y21     [get_ports ]
 
 #===========================================
-# YOC SOCKET 3
+# YOC SOCKET 3//segment play
 #===========================================
-set_property PACKAGE_PIN M21    [get_ports PAD_PWM_CH0]
-set_property PACKAGE_PIN N17    [get_ports PAD_PWM_CH1]
-set_property PACKAGE_PIN N13    [get_ports PAD_PWM_CH2]
-set_property PACKAGE_PIN N19    [get_ports PAD_PWM_CH3]
-set_property PACKAGE_PIN N18    [get_ports PAD_PWM_CH4]
-set_property PACKAGE_PIN N14    [get_ports PAD_PWM_CH5]
-set_property PACKAGE_PIN N20    [get_ports PAD_PWM_CH6]
-set_property PACKAGE_PIN N22    [get_ports PAD_PWM_CH7]
-set_property PACKAGE_PIN N15    [get_ports PAD_PWM_CH8]
-set_property PACKAGE_PIN M15    [get_ports PAD_PWM_CH9]
-set_property PACKAGE_PIN M17    [get_ports PAD_PWM_CH10]
-set_property PACKAGE_PIN M13    [get_ports PAD_PWM_CH11]
-set_property PACKAGE_PIN M18    [get_ports PAD_PWM_FAULT]
+set_property PACKAGE_PIN T10 [get_ports PAD_PWM_CH0]
+set_property PACKAGE_PIN R10 [get_ports PAD_PWM_CH1]
+set_property PACKAGE_PIN K16 [get_ports PAD_PWM_CH2]
+set_property PACKAGE_PIN K13 [get_ports PAD_PWM_CH3]
+set_property PACKAGE_PIN P15 [get_ports PAD_PWM_CH4]
+set_property PACKAGE_PIN T11 [get_ports PAD_PWM_CH5]
+set_property PACKAGE_PIN L18 [get_ports PAD_PWM_CH6]
+set_property PACKAGE_PIN H15 [get_ports PAD_PWM_CH7]
+set_property PACKAGE_PIN J17 [get_ports PAD_PWM_CH8]
+set_property PACKAGE_PIN J18 [get_ports PAD_PWM_CH9]
+set_property PACKAGE_PIN T9 [get_ports PAD_PWM_CH10]
+set_property PACKAGE_PIN J14 [get_ports PAD_PWM_CH11]
+set_property PACKAGE_PIN P14 [get_ports PAD_PWM_FAULT]
 #set_property PACKAGE_PIN M16    [get_ports ]
 #set_property PACKAGE_PIN M22    [get_ports ]
 #set_property PACKAGE_PIN L13    [get_ports ]
@@ -186,18 +256,18 @@ set_property PACKAGE_PIN M18    [get_ports PAD_PWM_FAULT]
 #===========================================
 # YOC SOCKET 4
 #===========================================
-set_property PACKAGE_PIN L18    [get_ports PAD_USI0_NSS]
-set_property PACKAGE_PIN L15    [get_ports PAD_USI0_SCLK]
-set_property PACKAGE_PIN L21    [get_ports PAD_USI0_SD0]
-set_property PACKAGE_PIN L19    [get_ports PAD_USI0_SD1]
-set_property PACKAGE_PIN K18    [get_ports PAD_USI1_NSS]
-set_property PACKAGE_PIN K16    [get_ports PAD_USI1_SCLK]
-set_property PACKAGE_PIN K13    [get_ports PAD_USI1_SD0]
-set_property PACKAGE_PIN K17    [get_ports PAD_USI1_SD1]
-set_property PACKAGE_PIN K14    [get_ports PAD_USI2_NSS]
-set_property PACKAGE_PIN K19    [get_ports PAD_USI2_SCLK]
-set_property PACKAGE_PIN J14    [get_ports PAD_USI2_SD0]
-set_property PACKAGE_PIN K22    [get_ports PAD_USI2_SD1]
+set_property PACKAGE_PIN D14 [get_ports PAD_USI0_NSS]
+set_property PACKAGE_PIN G16 [get_ports PAD_USI0_SCLK]
+set_property PACKAGE_PIN F16 [get_ports PAD_USI0_SD0]
+set_property PACKAGE_PIN H14 [get_ports PAD_USI0_SD1]
+set_property PACKAGE_PIN E16 [get_ports PAD_USI1_NSS]
+set_property PACKAGE_PIN F13 [get_ports PAD_USI1_SCLK]
+set_property PACKAGE_PIN G13 [get_ports PAD_USI1_SD0]
+set_property PACKAGE_PIN H16 [get_ports PAD_USI1_SD1]
+set_property PACKAGE_PIN D17 [get_ports PAD_USI2_NSS]
+set_property PACKAGE_PIN E17 [get_ports PAD_USI2_SCLK]
+set_property PACKAGE_PIN F18 [get_ports PAD_USI2_SD0]
+set_property PACKAGE_PIN G18 [get_ports PAD_USI2_SD1]
 #set_property PACKAGE_PIN J16    [get_ports ]
 #set_property PACKAGE_PIN K21    [get_ports ]
 #set_property PACKAGE_PIN J15    [get_ports ]
@@ -297,13 +367,13 @@ set_property PACKAGE_PIN K22    [get_ports PAD_USI2_SD1]
 #set_property PACKAGE_PIN W14    [get_ports {gpio8_port[16]}]
 #set_property PACKAGE_PIN T14    [get_ports {gpio8_port[17]}]
 #set_property PACKAGE_PIN Y14    [get_ports {gpio8_port[18]}]
-#  
+#
 
 #===========================================
 # UART:
 #===========================================
-#set_property PACKAGE_PIN N3   [get_ports ]
-#set_property PACKAGE_PIN N4   [get_ports ]
+#set_property PACKAGE_PIN G16   [get_ports PAD_USI0_SCLK ]
+#set_property PACKAGE_PIN F16   [get_ports PAD_USI0_SD0 ]
 #set_property PACKAGE_PIN N5   [get_ports ]
 #set_property PACKAGE_PIN M2   [get_ports ]
 #set_property PACKAGE_PIN M5   [get_ports ]
@@ -339,17 +409,26 @@ set_property PACKAGE_PIN K22    [get_ports PAD_USI2_SD1]
 #===========================================
 # RGB LED
 #===========================================
-set_property PACKAGE_PIN P4  [get_ports POUT_EHS]
+set_property PACKAGE_PIN R12 [get_ports POUT_EHS]
 #set_property PACKAGE_PIN P5  [get_ports POUT_ELS]
 #set_property PACKAGE_PIN N2  [get_ports ]
 
 #===========================================
 # FPGA configuration properties
 #===========================================
-set_property CONFIG_VOLTAGE  3.3   [current_design]
-set_property CFGBVS          VCCO  [current_design]
-set_property CONFIG_MODE     SPIx4 [current_design]
-set_property BITSTREAM.CONFIG.SPI_BUSWIDTH      4      [current_design]
-set_property BITSTREAM.CONFIG.CONFIGRATE        40     [current_design]
-set_property BITSTREAM.CONFIG.EXTMASTERCCLK_EN  DIV-2  [current_design]
+set_property CONFIG_VOLTAGE 3.3 [current_design]
+set_property CFGBVS VCCO [current_design]
+set_property CONFIG_MODE SPIx4 [current_design]
+set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
+set_property BITSTREAM.CONFIG.CONFIGRATE 40 [current_design]
+#set_property BITSTREAM.CONFIG.EXTMASTERCCLK_EN DIV-2 [current_design]
+
+
+
+
+
+
+
+
+
 
