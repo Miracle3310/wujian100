@@ -96,7 +96,7 @@ int main(void)
     while (csi_spi_get_status(handle).busy)
     {
         timecount++;
-		printf("timeout: %d",timecount);
+		printf("timeout: %d\n\r",timecount);
         if (timecount >= TEST_SPI_TIMEOUT)//TEST_SPI_TIMEOUT not defined
         {
             break;
