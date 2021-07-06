@@ -92,16 +92,16 @@ static void wujian100_spi_test(void *args){
 		test_sleep(1000000);
         csi_spi_ss_control(handle, SPI_SS_ACTIVE);
 		
-//		printf("recv:%d\n", data_test);
-//        ret=csi_spi_receive(spi_t, &data_test, 1);
-//        if(ret<0){
+		printf("recv:%d\n", data_test);
+        ret=csi_spi_receive(spi_t, &data_test, 1);
+        if(ret<0){
 //            printf("recv failed.\n");
-//        }
+        }
         
-		printf("send:%d\n", data_test);
+//		printf("send:%d\n", data_test);
 	    ret=csi_spi_send(spi_t, &data_test, 1);
 	    if(ret<0){
-		   printf("send failed.\n");
+//		   printf("send failed.\n");
 	    }
         csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 		data_test--;
