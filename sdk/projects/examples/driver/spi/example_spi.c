@@ -73,6 +73,8 @@ static int wujian100_spi_init(int32_t idx)//idx->MY_USI_IDX
         SPI_FORMAT_CPOL0_CPHA0, SPI_ORDER_MSB2LSB,
         SPI_SS_MASTER_SW, 8);
 
+    ret = csi_spi_config_block_mode(spi_t, 1);
+
     if (ret != 0) {
         printf("%s(), %d spi config error, %d\n", __func__, __LINE__, ret);
         return -1;
@@ -86,28 +88,33 @@ static int wujian100_spi_init(int32_t idx)//idx->MY_USI_IDX
 static void wujian100_spi_test(void *args){
     printf("start FPGA spi test.\n");
     spi_handle_t handle = spi_t;
-    uint8_t data_test = 100;
+    uint8_t data_test = 255;
+	uint8_t recv=0;
     int32_t ret;
     while(1){
-		test_sleep(1000000);
+		// test_sleep(1000000);
         csi_spi_ss_control(handle, SPI_SS_ACTIVE);
 		
-		printf("recv:%d\n", data_test);
-        ret=csi_spi_receive(spi_t, &data_test, 1);
-        if(ret<0){
-//            printf("recv failed.\n");
-        }
+		 
+//         ret=csi_spi_receive(spi_t, &data_test, 1);
+//		 printf("recv:%d\n", data_test);
+        // if(ret<0){
+        //    printf("recv failed.\n");
+        // }
         
-//		printf("send:%d\n", data_test);
+		printf("send:%d\n", data_test);
 	    ret=csi_spi_send(spi_t, &data_test, 1);
-	    if(ret<0){
-//		   printf("send failed.\n");
-	    }
+//         while(csi_spi_get_status(handle).busy);
+	    // if(ret<0){
+		//    printf("send failed.\n");
+	    // }
         csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 		data_test--;
-        
-    }
+        mdelay(500);
+        }
 }
+
+
 
 int main(void)
 {
