@@ -220,7 +220,7 @@ int main(void)
 #define MY_USI_IDX 1 //select USI1
 #define MY_SPI_CLK_RATE 40000000
 #define TEST_SPI_TIMEOUT 50
-#define ElementType uint8
+#define ElementType uint8_t
 #define ElementBit 8
 
 extern int32_t w25q64flash_read_id(spi_handle_t handle, uint32_t* id_num);
