@@ -218,8 +218,10 @@ int main(void)
 #define OPERATE_LEN     256
 #define SPIFLASH_BASE_VALUE 0x0
 #define MY_USI_IDX 1 //select USI1
-#define MY_SPI_CLK_RATE 100000
-#define TEST_SPI_TIMEOUT 500
+#define MY_SPI_CLK_RATE 40000000
+#define TEST_SPI_TIMEOUT 50
+#define ElementType uint8
+#define ElementBit 8
 
 extern int32_t w25q64flash_read_id(spi_handle_t handle, uint32_t* id_num);
 extern int32_t w25q64flash_erase_sector(spi_handle_t handle, uint32_t addr);
@@ -268,7 +270,7 @@ static int wujian100_spi_init(int32_t idx)//idx->MY_USI_IDX
 
     ret = csi_spi_config(spi_t, MY_SPI_CLK_RATE, SPI_MODE_MASTER,
         SPI_FORMAT_CPOL0_CPHA0, SPI_ORDER_MSB2LSB,
-        SPI_SS_MASTER_SW, 16);
+        SPI_SS_MASTER_SW, ElementBit);
 
     ret = csi_spi_config_block_mode(spi_t, 1);
 
@@ -285,7 +287,7 @@ static int wujian100_spi_init(int32_t idx)//idx->MY_USI_IDX
 static void wujian100_spi_test(void *args){
     printf("start FPGA spi test.\n");
     spi_handle_t handle = spi_t;
-    uint16_t data_test = 60000;
+    ElementType data_test = 255;
 //	uint8_t recv=0;
     int32_t ret;
     while(1){
