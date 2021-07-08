@@ -515,7 +515,7 @@
     <DebugLaunch>35</DebugLaunch>
   </MonitorProgress>
   <DebugSessions>
-    <watchExpressions>*data:1;data_test:1;data:1</watchExpressions>
+    <watchExpressions/>
     <memoryExpressions>;;;</memoryExpressions>
     <statistics>;;MHZ;</statistics>
     <peripheralTabs/>

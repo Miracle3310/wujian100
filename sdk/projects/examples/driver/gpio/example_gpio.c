@@ -41,7 +41,7 @@ void gpio_falling_edge_interrupt(pin_name_e gpio_pin)
     csi_gpio_pin_set_irq(pin, GPIO_IRQ_MODE_FALLING_EDGE, 1);
 
     while (int_flag);
-
+	
     int_flag = 1;
     csi_gpio_pin_uninitialize(pin);
     printf("gpio falling_edge test passed!!!\n");
