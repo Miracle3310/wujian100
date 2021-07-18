@@ -20,7 +20,7 @@
 #define TEST_SPI_TIMEOUT 50
 #define ElementType uint8_t
 #define ElementBit 8
-#define NBYTE 224
+#define NBYTE 16
 #define NCHANNEL 1
 #define TOTALBYTE 224*224*NCHANNEL
 
@@ -80,41 +80,37 @@ static void wujian100_spi_test(void *args){
     printf("start FPGA spi test.\n");
     spi_handle_t handle = spi_t;
     // ElementType data_test = 255;
-    ElementType data_test[NBYTE] = 0;
+    ElementType data_test[NBYTE] = {0};
     int frame_num = 0;
     //	uint8_t recv=0;
     int32_t ret;
+	int i,j;
     while(1){
-        data_test[frame_num] = 255;
+        data_test[frame_num] = 10;
         if(frame_num==0){
-            data_test[NBYTE - 1] = 0;
+            data_test[NBYTE - 1] = 200;
         }
         else{
-            data_test[frame_num - 1] = 0;
+            data_test[frame_num - 1] = 200;
         }
         frame_num++;
         if(frame_num==NBYTE){
-            frame_num == 0;
+            frame_num = 0;
         }
-        printf("frame_num:\n", frame_num);
-        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-		
-		 
-//         ret=csi_spi_receive(spi_t, &data_test, 1);
-//		 printf("recv:%d\n", data_test);
-        // if(ret<0){
-        //    printf("recv failed.\n");
-        // }
+
+//        printf("frame_num:%d\n", frame_num);
+		for (j=0;j<NBYTE;j++){
+			for (i=0;i<NBYTE;i++){
+			printf("%3d ",data_test[i]);
+				}
+			printf("\r\n");
+			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+			ret=csi_spi_send(spi_t, data_test, NBYTE);
+			csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+	//		data_test-=1;
+			mdelay(10);
+		}
         
-		// printf("send:%d\n", data_test);
-	    ret=csi_spi_send(spi_t, &data_test, NBYTE);
-//         while(csi_spi_get_status(handle).busy);
-	    // if(ret<0){
-		//    printf("send failed.\n");
-	    // }
-        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-		data_test-=1;
-        mdelay(1000);
         }
 }
 
