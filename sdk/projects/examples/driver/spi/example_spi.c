@@ -81,13 +81,15 @@ static void wujian100_spi_test(void *args){
     spi_handle_t handle = spi_t;
     // ElementType data_test = 255;
     ElementType data_test[NBYTE] = {0};
+    ElementType nbyte = NBYTE;
     int frame_num = 0;
-    //	uint8_t recv=0;
+   	ElementType ack=0;
     int32_t ret;
 	int i,j;
 
     csi_spi_ss_control(handle, SPI_SS_ACTIVE);
     while(1){
+        // generate test frame
         data_test[frame_num] = 0;
         if(frame_num==NBYTE - 1){
             data_test[0] = 255;
@@ -106,9 +108,15 @@ static void wujian100_spi_test(void *args){
             frame_num = 0;
         }
 
-//        printf("frame_num:%d\n", frame_num);
-		for (j=0;j<NBYTE;j++){
-			for (i=0;i<NBYTE;i++){
+        // hand shake
+        ret = csi_spi_send(spi_t, &nbyte, 1);
+        ret = csi_spi_recv(spi_t, &ack, 1);
+        printf("%d\r\n", ack);
+
+        // send
+        for (j = 0; j < NBYTE; j++)
+        {
+            for (i=0;i<NBYTE;i++){
 			printf("%3d ",data_test[i]);
 				}
 			printf("\r\n");
@@ -116,8 +124,7 @@ static void wujian100_spi_test(void *args){
 			ret=csi_spi_send(spi_t, data_test, NBYTE);
 			// csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 			mdelay(10);
-		}
-        
+        }
         }
 }
 
