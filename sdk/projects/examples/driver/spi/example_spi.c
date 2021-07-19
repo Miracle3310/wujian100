@@ -16,7 +16,7 @@
 // #define OPERATE_LEN     256
 // #define SPIFLASH_BASE_VALUE 0x0
 #define MY_USI_IDX 1 //select USI1
-#define MY_SPI_CLK_RATE 115200
+#define MY_SPI_CLK_RATE 10000000
 // #define TEST_SPI_TIMEOUT 50
 #define ElementType uint8_t
 #define ElementBit 8
@@ -79,39 +79,51 @@ static int wujian100_spi_init(int32_t idx)//idx->MY_USI_IDX
 static void wujian100_spi_test(void *args){
     printf("start FPGA spi test.\n");
     spi_handle_t handle = spi_t;
-    // ElementType data_test = 255;
+    // ElementType data_test = 200;
     ElementType data_test[NBYTE] = {0};
-    ElementType nbyte = NBYTE;
+//    ElementType nbyte = NBYTE;
     int frame_num = 0;
-   	ElementType ack=0;
+	ElementType request[NBYTE]={0};
+   	ElementType ack[NBYTE]={0};
     int32_t ret;
 	int i,j;
+	
+	for(i=0;i<NBYTE;i++){
+		request[i]=0;
+	}
 
-    csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+    
     while(1){
         // generate test frame
-        data_test[frame_num] = 0;
+		int begin=0;
+		int end=100;
+        data_test[frame_num] = begin;
         if(frame_num==NBYTE - 1){
-            data_test[0] = 255;
+            data_test[0] = begin;
         }
         else{
-            data_test[frame_num + 1] = 255;
+            data_test[frame_num + 1] = begin;
         }
         if(frame_num==0){
-            data_test[NBYTE - 1] = 255;
+            data_test[NBYTE - 1] = end;
         }
         else{
-            data_test[frame_num - 1] = 255;
+            data_test[frame_num - 1] = end;
         }
         frame_num++;
         if(frame_num==NBYTE){
             frame_num = 0;
         }
-
+		
+//		csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+		
         // hand shake
-        ret = csi_spi_send(spi_t, &nbyte, 1);
-        ret = csi_spi_recv(spi_t, &ack, 1);
-        printf("%d\r\n", ack);
+//        ret = csi_spi_send(spi_t, request, NBYTE);
+//        ret = csi_spi_receive(spi_t, ack, NBYTE);
+//            for (i=0;i<NBYTE;i++){
+//			printf("%3d ",request[i]);
+//				}
+//			printf("\r\n");
 
         // send
         for (j = 0; j < NBYTE; j++)
@@ -120,11 +132,14 @@ static void wujian100_spi_test(void *args){
 			printf("%3d ",data_test[i]);
 				}
 			printf("\r\n");
-
-			ret=csi_spi_send(spi_t, data_test, NBYTE);
-			// csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 			mdelay(10);
+			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+			ret=csi_spi_send(spi_t, data_test, NBYTE);
+			 csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+			
         }
+//		mdelay(200);
+		
         }
 }
 
