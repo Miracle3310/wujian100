@@ -12,12 +12,12 @@
 #include "drv_gpio.h"
 #include "w25q64fv.h"
 
-#define OPERATE_ADDR    0x0
-#define OPERATE_LEN     256
-#define SPIFLASH_BASE_VALUE 0x0
+// #define OPERATE_ADDR    0x0
+// #define OPERATE_LEN     256
+// #define SPIFLASH_BASE_VALUE 0x0
 #define MY_USI_IDX 1 //select USI1
-#define MY_SPI_CLK_RATE 40000000
-#define TEST_SPI_TIMEOUT 50
+#define MY_SPI_CLK_RATE 115200
+// #define TEST_SPI_TIMEOUT 50
 #define ElementType uint8_t
 #define ElementBit 8
 #define NBYTE 16
@@ -85,13 +85,21 @@ static void wujian100_spi_test(void *args){
     //	uint8_t recv=0;
     int32_t ret;
 	int i,j;
+
+    csi_spi_ss_control(handle, SPI_SS_ACTIVE);
     while(1){
-        data_test[frame_num] = 10;
-        if(frame_num==0){
-            data_test[NBYTE - 1] = 200;
+        data_test[frame_num] = 0;
+        if(frame_num==NBYTE - 1){
+            data_test[0] = 255;
         }
         else{
-            data_test[frame_num - 1] = 200;
+            data_test[frame_num + 1] = 255;
+        }
+        if(frame_num==0){
+            data_test[NBYTE - 1] = 255;
+        }
+        else{
+            data_test[frame_num - 1] = 255;
         }
         frame_num++;
         if(frame_num==NBYTE){
@@ -104,10 +112,9 @@ static void wujian100_spi_test(void *args){
 			printf("%3d ",data_test[i]);
 				}
 			printf("\r\n");
-			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+
 			ret=csi_spi_send(spi_t, data_test, NBYTE);
-			csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-	//		data_test-=1;
+			// csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 			mdelay(10);
 		}
         
@@ -118,16 +125,8 @@ static void wujian100_spi_test(void *args){
 
 int main(void)
 {
-	// int p[100];//test data
-    // for (int j = 0; j < 100; j++)
-    // {
-    //     p[j] = j;
-    // }
-	// uint32_t timecount = 0;
-	// uint32_t i=0;
 	printf("test");
 	wujian100_spi_init(MY_USI_IDX);
-
     wujian100_spi_test(0);
 
     // while(1)
