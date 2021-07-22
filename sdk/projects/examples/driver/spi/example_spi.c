@@ -16,7 +16,7 @@
 // #define OPERATE_LEN     256
 // #define SPIFLASH_BASE_VALUE 0x0
 #define MY_USI_IDX 1 //select USI1
-#define MY_SPI_CLK_RATE 10000000
+#define MY_SPI_CLK_RATE 115200
 // #define TEST_SPI_TIMEOUT 50
 #define ElementType uint8_t
 #define ElementBit 8
@@ -32,6 +32,14 @@ extern int32_t w25q64flash_read_data(spi_handle_t handle, uint32_t addr, void* d
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 
 static spi_handle_t spi_t;
+
+void print_data(ElementType *data, ElementType n){
+	int j;
+	for(j=0;j<n;j++){
+	   printf("%3d ",data[j]);
+	}
+	printf("\n");
+}
 
 static void spi_event_cb_fun(int32_t idx, spi_event_e event)
 {
@@ -80,23 +88,32 @@ static void wujian100_spi_test(void *args){
     printf("start FPGA spi test.\n");
     spi_handle_t handle = spi_t;
     // ElementType data_test = 200;
-    ElementType data_test[NBYTE] = {0};
+    volatile ElementType data_test[NBYTE+1] = {0};
 //    ElementType nbyte = NBYTE;
     int frame_num = 0;
-	ElementType request[NBYTE]={0};
-   	ElementType ack[NBYTE]={0};
+	volatile ElementType request[NBYTE+1]={0};
+   	ElementType ack[NBYTE+1]={0};
     int32_t ret;
 	int i,j;
 	
-	for(i=0;i<NBYTE;i++){
-		request[i]=0;
+	for(i=0;i<NBYTE+1;i++){
+		request[i]=1;
 	}
 
     
     while(1){
+		// hand shake
+		csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+		mdelay(100);
+        ret = csi_spi_send(spi_t, request, NBYTE+1);
+//		while (csi_spi_get_status(handle).busy);
+		print_data(request,NBYTE+1);
+//		csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+		
+		
         // generate test frame
 		int begin=0;
-		int end=100;
+		int end=200;
         data_test[frame_num] = begin;
         if(frame_num==NBYTE - 1){
             data_test[0] = begin;
@@ -117,28 +134,25 @@ static void wujian100_spi_test(void *args){
 		
 //		csi_spi_ss_control(handle, SPI_SS_ACTIVE);
 		
-        // hand shake
-//        ret = csi_spi_send(spi_t, request, NBYTE);
-//        ret = csi_spi_receive(spi_t, ack, NBYTE);
-//            for (i=0;i<NBYTE;i++){
-//			printf("%3d ",request[i]);
-//				}
-//			printf("\r\n");
+
 
         // send
         for (j = 0; j < NBYTE; j++)
         {
-            for (i=0;i<NBYTE;i++){
-			printf("%3d ",data_test[i]);
-				}
-			printf("\r\n");
-			mdelay(10);
-			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-			ret=csi_spi_send(spi_t, data_test, NBYTE);
-			 csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+			data_test[NBYTE]=j;
+			print_data(data_test,NBYTE+1);
+			
+//			mdelay(200);
+//			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+//			mdelay(50);
+			ret=csi_spi_send(spi_t, data_test, NBYTE+1);
+//			while (csi_spi_get_status(handle).busy);
+//			csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 			
         }
-//		mdelay(200);
+//		mdelay(1000);
+		csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+		mdelay(50);
 		
         }
 }
