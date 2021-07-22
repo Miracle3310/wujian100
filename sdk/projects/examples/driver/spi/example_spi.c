@@ -20,25 +20,29 @@
 // #define TEST_SPI_TIMEOUT 50
 #define ElementType uint8_t
 #define ElementBit 8
-#define NBYTE 16
+#define LENGTH 32
+#define NBYTE (LENGTH*LENGTH)
 #define NCHANNEL 1
-#define TOTALBYTE 224*224*NCHANNEL
+#define TOTALBYTE (LENGTH*LENGTH*NCHANNEL)
 
-extern int32_t w25q64flash_read_id(spi_handle_t handle, uint32_t* id_num);
-extern int32_t w25q64flash_erase_sector(spi_handle_t handle, uint32_t addr);
-extern int32_t w25q64flash_erase_chip(spi_handle_t handle);
-extern int32_t w25q64flash_program_data(spi_handle_t handle, uint32_t addr, const void* data, uint32_t cnt);
-extern int32_t w25q64flash_read_data(spi_handle_t handle, uint32_t addr, void* data, uint32_t cnt);
+ extern int32_t w25q64flash_read_id(spi_handle_t handle, uint32_t* id_num);
+ extern int32_t w25q64flash_erase_sector(spi_handle_t handle, uint32_t addr);
+ extern int32_t w25q64flash_erase_chip(spi_handle_t handle);
+ extern int32_t w25q64flash_program_data(spi_handle_t handle, uint32_t addr, const void* data, uint32_t cnt);
+ extern int32_t w25q64flash_read_data(spi_handle_t handle, uint32_t addr, void* data, uint32_t cnt);
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 
 static spi_handle_t spi_t;
 
-void print_data(ElementType *data, ElementType n){
-	int j;
+void print_data(ElementType *data, uint16_t n){
+	uint16_t j;
 	for(j=0;j<n;j++){
-	   printf("%3d ",data[j]);
+        if((j % LENGTH) == 0){
+            printf("\r\n");
+        }
+       printf("%3d ",data[j]);
 	}
-	printf("\n");
+	printf("\r\n");
 }
 
 static void spi_event_cb_fun(int32_t idx, spi_event_e event)
@@ -88,72 +92,59 @@ static void wujian100_spi_test(void *args){
     printf("start FPGA spi test.\n");
     spi_handle_t handle = spi_t;
     // ElementType data_test = 200;
-    volatile ElementType data_test[NBYTE+1] = {0};
+    ElementType data_test[NBYTE] = {0};
 //    ElementType nbyte = NBYTE;
-    int frame_num = 0;
-	volatile ElementType request[NBYTE+1]={0};
-   	ElementType ack[NBYTE+1]={0};
+    uint32_t frame_num = 1;
+//	ElementType request[NBYTE]={0};
+//   	ElementType ack[NBYTE+1]={0};
     int32_t ret;
-	int i,j;
-	
-	for(i=0;i<NBYTE+1;i++){
-		request[i]=1;
-	}
+	uint32_t i,j;
+    ElementType begin = 200;
+    ElementType end = 0;
+
+    // initial
+//	for(i=0;i<NBYTE;i++){
+//		request[i]=1;
+//	}
 
     
     while(1){
 		// hand shake
-		csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-		mdelay(100);
-        ret = csi_spi_send(spi_t, request, NBYTE+1);
-//		while (csi_spi_get_status(handle).busy);
-		print_data(request,NBYTE+1);
-//		csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+		// csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+		// mdelay(100);
+        // ret = csi_spi_send(spi_t, request, NBYTE+1);
+		// while (csi_spi_get_status(handle).busy);
+		// print_data(request,NBYTE+1);
+		// csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 		
 		
         // generate test frame
-		int begin=0;
-		int end=200;
-        data_test[frame_num] = begin;
-        if(frame_num==NBYTE - 1){
-            data_test[0] = begin;
-        }
-        else{
-            data_test[frame_num + 1] = begin;
-        }
-        if(frame_num==0){
-            data_test[NBYTE - 1] = end;
-        }
-        else{
-            data_test[frame_num - 1] = end;
+        for (i = 0; i < LENGTH; i++)
+        {
+            data_test[i * LENGTH+frame_num] = begin;
+            data_test[i * LENGTH+frame_num-1] = end;
         }
         frame_num++;
-        if(frame_num==NBYTE){
-            frame_num = 0;
-        }
-		
-//		csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-		
-
-
-        // send
-        for (j = 0; j < NBYTE; j++)
+        if (frame_num == LENGTH)
         {
-			data_test[NBYTE]=j;
-			print_data(data_test,NBYTE+1);
-			
-//			mdelay(200);
-//			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-//			mdelay(50);
-			ret=csi_spi_send(spi_t, data_test, NBYTE+1);
-//			while (csi_spi_get_status(handle).busy);
-//			csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-			
+            frame_num = 1;
         }
-//		mdelay(1000);
+        // send
+        for (j = 0; j < (TOTALBYTE / NBYTE); j++)
+        {
+            print_data(data_test, NBYTE);
+
+//            mdelay(100);
+            //			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+            //			mdelay(50);
+            ret = csi_spi_send(spi_t, data_test, NBYTE + 1);
+            //			while (csi_spi_get_status(handle).busy);
+            //			csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+		}
+		mdelay(100);
+//		printf("test\r\n");
 		csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-		mdelay(50);
-		
+//		mdelay(50);
         }
 }
 
@@ -161,7 +152,7 @@ static void wujian100_spi_test(void *args){
 
 int main(void)
 {
-	printf("test");
+//	printf("test");
 	wujian100_spi_init(MY_USI_IDX);
     wujian100_spi_test(0);
 
