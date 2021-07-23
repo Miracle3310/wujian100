@@ -20,7 +20,7 @@
 // #define TEST_SPI_TIMEOUT 50
 #define ElementType uint8_t
 #define ElementBit 8
-#define LENGTH 32
+#define LENGTH 224
 #define NBYTE (LENGTH*LENGTH)
 #define NCHANNEL 1
 #define TOTALBYTE (LENGTH*LENGTH*NCHANNEL)
@@ -124,10 +124,10 @@ static void wujian100_spi_test(void *args){
             data_test[i * LENGTH+frame_num] = begin;
 
             if(frame_num==0){
-                data_test[i * NBYTE + LENGTH - 1] = end;
+                data_test[i * LENGTH + LENGTH - 1] = end;
             }
             else{
-                data_test[i * LENGTH + LENGTH - 1] = end;
+                data_test[i * LENGTH + frame_num - 1] = end;
             }
         }
         frame_num++;
@@ -142,7 +142,6 @@ static void wujian100_spi_test(void *args){
         {
             print_data(data_test, NBYTE);
             // mdelay(100);
-            mdelay(50);
             ret = csi_spi_send(spi_t, data_test, NBYTE + 1);
             //			while (csi_spi_get_status(handle).busy);
 		}
