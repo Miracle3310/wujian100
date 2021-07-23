@@ -16,7 +16,7 @@
 // #define OPERATE_LEN     256
 // #define SPIFLASH_BASE_VALUE 0x0
 #define MY_USI_IDX 1 //select USI1
-#define MY_SPI_CLK_RATE 115200
+#define MY_SPI_CLK_RATE 1000000
 // #define TEST_SPI_TIMEOUT 50
 #define ElementType uint8_t
 #define ElementBit 8
@@ -40,7 +40,7 @@ void print_data(ElementType *data, uint16_t n){
         if((j % LENGTH) == 0){
             printf("\r\n");
         }
-       printf("%3d ",data[j]);
+       printf("%x",data[j]);
 	}
 	printf("\r\n");
 }
@@ -137,18 +137,19 @@ static void wujian100_spi_test(void *args){
         }
 
         // send
+		printf("send spi\r\n");
 	    csi_spi_ss_control(handle, SPI_SS_ACTIVE);
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
         {
-            print_data(data_test, NBYTE);
+//            print_data(data_test, NBYTE);
             // mdelay(100);
             ret = csi_spi_send(spi_t, data_test, NBYTE + 1);
             //			while (csi_spi_get_status(handle).busy);
 		}
-		// mdelay(100);
+		 mdelay(100);
 		// printf("test\r\n");
 		csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-		mdelay(50);
+//		mdelay(100);
         }
 }
 
