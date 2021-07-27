@@ -79,7 +79,7 @@ typedef struct{
 #define ElementType uint8_t
 #define ElementBit 8
 #define LENGTH 112
-#define NBYTE (56*56)
+#define NBYTE (112)
 #define NCHANNEL 1
 #define TOTALBYTE (LENGTH*LENGTH*NCHANNEL)
 
@@ -111,7 +111,7 @@ void Videopass_get(ElementType *pass_data){
 					VIDEO-> IR=i*4*56+j;
 					while(VIDEO->SR!=0x03);
 					temp_data=VIDEO-> OR;
-					pass_data[i*LENGTH+j]=temp_data & 0XFF;
+					pass_data[i*LENGTH+j]=(temp_data & 0XFF);
 				}
 			}
 			break;
@@ -240,18 +240,18 @@ static void wujian100_spi_test(void *args){
         // send
 //		printf("send spi\r\n");
 
+		csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+		mdelay(5);
+
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
         {
-            
-            // mdelay(100);
 			printf("spi send %d\r\n",j);
 			
-			csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-			mdelay(50);
+
             ret = csi_spi_send(spi_t, data_test+j*NBYTE, NBYTE);
-			csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 			
-			mdelay(500);
+			
+			mdelay(15);
 //			print_data(data_test, NBYTE);
 			if(ret<0){
 				printf("send fail\r\n");
@@ -265,6 +265,7 @@ static void wujian100_spi_test(void *args){
 //			print_data(ack, NBYTE+1);
 			
 		}
+		csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 //		 mdelay(1000);
 		// printf("test\r\n");
 		
