@@ -96,13 +96,21 @@ void Videopass_get(ElementType *pass_data){
 	uint16_t i,j;
 	uint32_t temp_data;
 	VIDEO-> SR=0x01;
-	for(j=0;j<(224*224/4);j=j+2){
-		VIDEO-> IR=j;
-		temp_data=VIDEO-> OR;
-//		for(i=0;i<4;i++){
-//			pass_data[j*4+i]=(temp_data>>(4*i)) & 0XFF;
-//		}
-		pass_data[j/2]=temp_data & 0XFF;
+//	for(j=0;j<(224*224/4);j=j+1){
+//		
+//		VIDEO-> IR=j;
+//		temp_data=VIDEO-> OR;
+////		for(i=0;i<4;i++){
+////			pass_data[j*4+i]=(temp_data>>(4*i)) & 0XFF;
+////		}
+//		pass_data[j]=temp_data & 0XFF;
+//	}
+	for(i=0;i<LENGTH;i++){
+		for(j=0;j<LENGTH;j++){
+			VIDEO-> IR=i*4*LENGTH+j;
+			temp_data=VIDEO-> OR;
+			pass_data[i*LENGTH+j]=temp_data & 0XFF;
+		}
 	}
 	VIDEO-> SR=0x00;
 }
@@ -153,7 +161,7 @@ static int wujian100_spi_init(int32_t idx)//idx->MY_USI_IDX
         SPI_SS_MASTER_SW, ElementBit);
 
     ret = csi_spi_config_block_mode(spi_t, 1);
-//	ret = csi_spi_power_control(spi_t, DRV_POWER_FULL);
+	ret = csi_spi_power_control(spi_t, DRV_POWER_FULL);
     if (ret != 0) {
         printf("%s(), %d spi config error, %d\n", __func__, __LINE__, ret);
         return -1;
@@ -194,11 +202,11 @@ static void wujian100_spi_test(void *args){
 		// csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 		
         // get data
-		printf("VIDEOPASS\r\n");
+//		printf("VIDEOPASS\r\n");
         Videopass_get(data_test);
-		printf("VIDEOPASS PASS\r\n");
+//		printf("VIDEOPASS PASS\r\n");
 		print_data(data_test, NBYTE);
-		printf("printf pass\r\n");
+//		printf("printf pass\r\n");
 
         // send
 //		printf("send spi\r\n");
@@ -207,7 +215,7 @@ static void wujian100_spi_test(void *args){
         {
             
             // mdelay(100);
-			printf("spi send\r\n");
+//			printf("spi send\r\n");
             ret = csi_spi_send(spi_t, data_test, NBYTE);
 //			print_data(data_test, NBYTE);
 			if(ret<0){
