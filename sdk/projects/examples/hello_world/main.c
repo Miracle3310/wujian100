@@ -28,9 +28,10 @@
 
 int main(void)
 {   while(1){
-	uint16_t rgb=*(volatile uint32_t *) 0x40010008 ;
-	printf("%x\r\n",rgb);
-	printf("hhh");
+//	uint16_t rgb=*(volatile uint32_t *) 0x40010008 ;
+//	printf("%x\r\n",rgb);
+//	printf("hhh");
+	printf("helloworld\r\n");
 	mdelay(500);
 }
     return 0;
