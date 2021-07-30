@@ -429,11 +429,11 @@ void print_data(ElementType *data, uint16_t n)
     uint16_t j;
     for (j = 0; j < n; j++)
     {
-        if ((j % LENGTH) == 0)
+        if ((j % LENGTH) == 0 && j!=0)
         {
             printf("\r\n");
         }
-        printf("%d ", data[j]);
+        printf("%3d ", data[j]);
     }
     printf("\r\n");
 }
@@ -514,7 +514,7 @@ static void wujian100_spi_test(void *args)
 
             //			print_data(spi_single,NBYTE+1);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-            mdelay(6);
+            mdelay(5);
             if (ret < 0)
             {
                 printf("send fail\r\n");
@@ -523,6 +523,12 @@ static void wujian100_spi_test(void *args)
         }
         csi_spi_ss_control(handle, SPI_SS_INACTIVE);
     }
+}
+
+ElementType TransType(int32_t pos){
+	if(pos<0) return 0;
+	else if(pos>224) return 224;
+	return (ElementType)pos;
 }
 
 int main(void)
@@ -537,7 +543,7 @@ int main(void)
     int32_t results[35];
     int last_class = -1;
 //    int number = -1;
-    ElementType x_min_224, y_min_224, x_max_224, y_max_224 = 0;
+    int32_t x_min_224, y_min_224, x_max_224, y_max_224 = 0;
     printf("******************\n");
     printf("wujian100 startup!\n");
 
@@ -547,7 +553,7 @@ int main(void)
             ;
         Detect();
         SDMA->state = ((SDMA->state) & 0xfffffffd);
-        printf("detecting done\r\n");
+//        printf("detecting done\r\n");
 
         ACC_get_result(results);
         for (int i = 0; i < 5; ++i)
@@ -559,10 +565,10 @@ int main(void)
             float float_result_4 = (float)results[i * 7 + 5];
             int32_t obj_h = (int32_t)(float_result_4 / 14);
             int32_t obj_w = (int32_t)(results[i * 7 + 5] % 14);
-            x_min_224 = (int32_t)(float_result_0 + obj_w * 16);
-            y_min_224 = (int32_t)(float_result_1 + obj_h * 16);
-            x_max_224 = (int32_t)(float_result_2 + obj_w * 16);
-            y_max_224 = (int32_t)(float_result_3 + obj_h * 16);
+//            x_min_224 = (int32_t)(float_result_0 + obj_w * 16);
+//            y_min_224 = (int32_t)(float_result_1 + obj_h * 16);
+//            x_max_224 = (int32_t)(float_result_2 + obj_w * 16);
+//            y_max_224 = (int32_t)(float_result_3 + obj_h * 16);
             
             int32_t x_min = (int32_t)(float_result_0 + obj_w * 16) * (640 / (float)224);
             int32_t y_min = (int32_t)(float_result_1 + obj_h * 16) * (360 / (float)224) + 60;
@@ -615,12 +621,25 @@ int main(void)
         {
             spi_single[i] = 0xFF;
         }
-        spi_single[0] = (ElementType)x_min_224;
-        spi_single[1] = (ElementType)y_min_224;
-        spi_single[2] = (ElementType)x_max_224;
-        spi_single[3] = (ElementType)y_max_224;
+		x_min_224 = (int32_t)select_result[frame2_state*7+0];
+		y_min_224 = (int32_t)select_result[frame2_state*7+1];
+		x_max_224 = (int32_t)select_result[frame2_state*7+2];
+		y_max_224 = (int32_t)select_result[frame2_state*7+3];
+//		printf("select: %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
+		
+		x_min_224 = (int32_t)x_min_224 * ((float)224 / 640 );
+		y_min_224 = (int32_t)(y_min_224-60) * ((float)224 / 360);
+		x_max_224 = (int32_t)x_max_224 * ((float)224 / 640);
+		y_max_224 = (int32_t)(y_max_224-60) * ((float)224 / 360);
+//		printf("224:   %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
+		
+		
+        spi_single[0] = TransType(x_min_224);
+        spi_single[1] = TransType(y_min_224);
+        spi_single[2] = TransType(x_max_224);
+        spi_single[3] = TransType(y_max_224);
         spi_single[4] = (ElementType)select_result[6];
-//		printf("uint8: ");
+
         print_data(spi_single, 5);
 
         //spi send
@@ -628,15 +647,12 @@ int main(void)
         mdelay(5);
 
         ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-        //		printf("%x\n\r",spi_single[NBYTE]);
         mdelay(5);
 
         spi_single[NBYTE] = 0xFE;
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
         {
             memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
-
-            //			print_data(spi_single,NBYTE+1);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
             mdelay(6);
             if (ret < 0)
