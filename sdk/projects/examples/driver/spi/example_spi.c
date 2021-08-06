@@ -18,6 +18,18 @@
 #define ACC_BASE (0x40100000UL)
 #define SDMA_BASE (0x40020000UL)
 #define VIDEO_BASE (0x40010000UL)
+
+#define MY_USI_IDX 1 //select USI1
+#define MY_SPI_CLK_RATE 9000000
+
+#define ElementType uint8_t
+#define LENGTH 112
+#define NBYTE 4
+#define NCHANNEL 1
+#define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
+
+#define SPITEST
+
 typedef struct
 {
     volatile uint32_t CONTROL_ADDR_AP_CTRL;                        //0x00
@@ -72,26 +84,16 @@ typedef struct
 
 } VIDEOPASSType;
 
-#define MY_USI_IDX 1 //select USI1
-#define MY_SPI_CLK_RATE 1000000
-
-#define ElementType uint8_t
-#define LENGTH 112
-#define NBYTE 14
-#define NCHANNEL 1
-#define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
-
-#define SPITEST
-
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
+void print_data(ElementType *data, uint16_t n);
 ElementType spi_img_data[TOTALBYTE + 1] = {0};
 ElementType spi_single[NBYTE + 1] = {0};
 
 void Spidata_get(ElementType *pass_data,int frame_num){
 	uint16_t i;
-	ElementType line_color=0xAA;
+	ElementType line_color=0xF1;
 	for(i=0;i<LENGTH;i++){
 		pass_data[i*LENGTH+frame_num]=line_color;
 		if(frame_num==0){
@@ -212,20 +214,22 @@ static int wujian100_spi_init(int32_t idx) //idx->MY_USI_IDX
 
 static void wujian100_spi_test(void *args)
 {
-    spi_handle_t handle = spi_t;
+//    spi_handle_t handle = spi_t;
     int32_t ret;
     uint32_t i, j;
 	int frame_num=0;
 
     while (1)
     {
-		mdelay(30);
+		mdelay(50);
         // get data
-		Spidata_get(spi_img_data,frame_num);
+		Spidata_get(spi_img_data,frame_num%LENGTH);
 		frame_num++;
-		if(frame_num==LENGTH) frame_num=0;
+//		if(frame_num==LENGTH) frame_num=0;
+		printf("%d\n",frame_num);
+
 //        Videopass_get(spi_img_data);
-        //		print_data(spi_img_data, NBYTE);
+//		print_data(spi_img_data, TOTALBYTE);
 
         // send
         for (i = 0; i <= NBYTE; i++)
@@ -237,23 +241,24 @@ static void wujian100_spi_test(void *args)
 //        mdelay(50);
 
         ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-		printf("%d\n",frame_num);
+//		print_data(spi_single,NBYTE+1);
 //        mdelay(5);
 
         spi_single[NBYTE] = 0xFE;
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
         {
             memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
-
+//			spi_single[NBYTE] = j+1;
 //			print_data(spi_single,NBYTE+1);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-//            mdelay(1);
+//            mdelay(500);
             if (ret < 0)
             {
                 printf("send fail\r\n");
                 mdelay(10000);
             }
         }
+//		print_data(spi_img_data, TOTALBYTE);
 //        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
     }
 }
@@ -542,7 +547,7 @@ void print_data(ElementType *data, uint16_t n)
         {
             printf("\r\n");
         }
-        printf("%3d ", data[j]);
+        printf("%02x", data[j]);
     }
     printf("\r\n");
 }
