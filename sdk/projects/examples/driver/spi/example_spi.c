@@ -77,15 +77,31 @@ typedef struct
 
 #define ElementType uint8_t
 #define LENGTH 112
-#define NBYTE (112)
+#define NBYTE 14
 #define NCHANNEL 1
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
+
+#define SPITEST
 
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
 ElementType spi_img_data[TOTALBYTE + 1] = {0};
 ElementType spi_single[NBYTE + 1] = {0};
+
+void Spidata_get(ElementType *pass_data,int frame_num){
+	uint16_t i;
+	ElementType line_color=0xAA;
+	for(i=0;i<LENGTH;i++){
+		pass_data[i*LENGTH+frame_num]=line_color;
+		if(frame_num==0){
+			pass_data[i*LENGTH+LENGTH-1]=0;
+		}
+		else{
+			pass_data[i*LENGTH+frame_num-1]=0;
+		}
+	}
+}
 
 void Videopass_get(ElementType *pass_data)
 {
@@ -147,6 +163,99 @@ void Videopass_get(ElementType *pass_data)
     }
 
     VIDEO->SR = 0x00;
+}
+
+
+static void spi_event_cb_fun(int32_t idx, spi_event_e event)
+{
+    // printf("\nspi_event_cb_fun:%d\n",event);
+}
+
+void example_pin_spi_init(void)
+{
+    drv_pinmux_config(EXAMPLE_PIN_SPI_MISO, EXAMPLE_PIN_SPI_MISO_FUNC);
+    drv_pinmux_config(EXAMPLE_PIN_SPI_MOSI, EXAMPLE_PIN_SPI_MOSI_FUNC);
+    drv_pinmux_config(EXAMPLE_PIN_SPI_SCK, EXAMPLE_PIN_SPI_SCK_FUNC);
+    drv_pinmux_config(EXAMPLE_PIN_SPI_CS, EXAMPLE_PIN_SPI_CS_FUNC);
+}
+
+static int wujian100_spi_init(int32_t idx) //idx->MY_USI_IDX
+{
+    int32_t ret;
+
+    //spi_handle_t spi_t;
+
+    example_pin_spi_init(); //spi pin config
+
+    spi_t = csi_spi_initialize(idx, spi_event_cb_fun);
+
+    if (spi_t == NULL)
+    {
+        printf(" csi_spi_initialize failed\n");
+        return -1;
+    }
+
+    ret = csi_spi_config(spi_t, MY_SPI_CLK_RATE, SPI_MODE_MASTER,
+                         SPI_FORMAT_CPOL0_CPHA0, SPI_ORDER_MSB2LSB,
+                         SPI_SS_MASTER_SW, sizeof(ElementType));
+
+    ret = csi_spi_config_block_mode(spi_t, 1);
+
+    if (ret != 0)
+    {
+        printf("%s(), %d spi config error, %d\n", __func__, __LINE__, ret);
+        return -1;
+    }
+
+    return 0;
+}
+
+static void wujian100_spi_test(void *args)
+{
+    spi_handle_t handle = spi_t;
+    int32_t ret;
+    uint32_t i, j;
+	int frame_num=0;
+
+    while (1)
+    {
+		mdelay(30);
+        // get data
+		Spidata_get(spi_img_data,frame_num);
+		frame_num++;
+		if(frame_num==LENGTH) frame_num=0;
+//        Videopass_get(spi_img_data);
+        //		print_data(spi_img_data, NBYTE);
+
+        // send
+        for (i = 0; i <= NBYTE; i++)
+        {
+            spi_single[i] = 0xFF;
+        }
+
+//        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+//        mdelay(50);
+
+        ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
+		printf("%d\n",frame_num);
+//        mdelay(5);
+
+        spi_single[NBYTE] = 0xFE;
+        for (j = 0; j < (TOTALBYTE / NBYTE); j++)
+        {
+            memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
+
+//			print_data(spi_single,NBYTE+1);
+            ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
+//            mdelay(1);
+            if (ret < 0)
+            {
+                printf("send fail\r\n");
+                mdelay(10000);
+            }
+        }
+//        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+    }
 }
 
 //SDMA AND ACC CONFIG
@@ -438,93 +547,6 @@ void print_data(ElementType *data, uint16_t n)
     printf("\r\n");
 }
 
-static void spi_event_cb_fun(int32_t idx, spi_event_e event)
-{
-    // printf("\nspi_event_cb_fun:%d\n",event);
-}
-
-void example_pin_spi_init(void)
-{
-    drv_pinmux_config(EXAMPLE_PIN_SPI_MISO, EXAMPLE_PIN_SPI_MISO_FUNC);
-    drv_pinmux_config(EXAMPLE_PIN_SPI_MOSI, EXAMPLE_PIN_SPI_MOSI_FUNC);
-    drv_pinmux_config(EXAMPLE_PIN_SPI_SCK, EXAMPLE_PIN_SPI_SCK_FUNC);
-    drv_pinmux_config(EXAMPLE_PIN_SPI_CS, EXAMPLE_PIN_SPI_CS_FUNC);
-}
-
-static int wujian100_spi_init(int32_t idx) //idx->MY_USI_IDX
-{
-    int32_t ret;
-
-    //spi_handle_t spi_t;
-
-    example_pin_spi_init(); //spi pin config
-
-    spi_t = csi_spi_initialize(idx, spi_event_cb_fun);
-
-    if (spi_t == NULL)
-    {
-        printf(" csi_spi_initialize failed\n");
-        return -1;
-    }
-
-    ret = csi_spi_config(spi_t, MY_SPI_CLK_RATE, SPI_MODE_MASTER,
-                         SPI_FORMAT_CPOL0_CPHA0, SPI_ORDER_MSB2LSB,
-                         SPI_SS_MASTER_SW, sizeof(ElementType));
-
-    ret = csi_spi_config_block_mode(spi_t, 1);
-
-    if (ret != 0)
-    {
-        printf("%s(), %d spi config error, %d\n", __func__, __LINE__, ret);
-        return -1;
-    }
-
-    return 0;
-}
-
-static void wujian100_spi_test(void *args)
-{
-    spi_handle_t handle = spi_t;
-    int32_t ret;
-    uint32_t i, j;
-
-    while (1)
-    {
-        // get data
-        Videopass_get(spi_img_data);
-        //		print_data(spi_img_data, NBYTE);
-
-        // send
-        for (i = 0; i <= NBYTE; i++)
-        {
-            spi_single[i] = 0xFF;
-        }
-
-        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-        mdelay(5);
-
-        ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-        //		printf("%x\n\r",spi_single[NBYTE]);
-        mdelay(5);
-
-        spi_single[NBYTE] = 0xFE;
-        for (j = 0; j < (TOTALBYTE / NBYTE); j++)
-        {
-            memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
-
-            //			print_data(spi_single,NBYTE+1);
-            ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-            mdelay(5);
-            if (ret < 0)
-            {
-                printf("send fail\r\n");
-                mdelay(10000);
-            }
-        }
-        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-    }
-}
-
 ElementType TransType(int32_t pos){
 	if(pos<0) return 0;
 	else if(pos>224) return 224;
@@ -533,8 +555,14 @@ ElementType TransType(int32_t pos){
 
 int main(void)
 {
-    //	printf("test");
+    printf("\n******************\n");
+    printf("wujian100 startup!\n");
     wujian100_spi_init(MY_USI_IDX);
+	
+	#ifdef SPITEST
+		wujian100_spi_test(0);
+	#endif
+	
     spi_handle_t handle = spi_t;
     int32_t ret;
     // wujian100_spi_test(0);
@@ -544,8 +572,6 @@ int main(void)
     int last_class = -1;
 //    int number = -1;
     int32_t x_min_224, y_min_224, x_max_224, y_max_224 = 0;
-    printf("******************\n");
-    printf("wujian100 startup!\n");
 
     while (1)
     {
