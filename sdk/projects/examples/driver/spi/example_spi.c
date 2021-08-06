@@ -91,18 +91,22 @@ void print_data(ElementType *data, uint16_t n);
 ElementType spi_img_data[TOTALBYTE + 1] = {0};
 ElementType spi_single[NBYTE + 1] = {0};
 
-void Spidata_get(ElementType *pass_data,int frame_num){
-	uint16_t i;
-	ElementType line_color=0xF1;
-	for(i=0;i<LENGTH;i++){
-		pass_data[i*LENGTH+frame_num]=line_color;
-		if(frame_num==0){
-			pass_data[i*LENGTH+LENGTH-1]=0;
-		}
-		else{
-			pass_data[i*LENGTH+frame_num-1]=0;
-		}
-	}
+void Spidata_get(ElementType *pass_data, int frame_num)
+{
+    uint16_t i;
+    ElementType line_color = 0xF1;
+    for (i = 0; i < LENGTH; i++)
+    {
+        pass_data[i * LENGTH + frame_num] = line_color;
+        if (frame_num == 0)
+        {
+            pass_data[i * LENGTH + LENGTH - 1] = 0;
+        }
+        else
+        {
+            pass_data[i * LENGTH + frame_num - 1] = 0;
+        }
+    }
 }
 
 void Videopass_get(ElementType *pass_data)
@@ -167,7 +171,6 @@ void Videopass_get(ElementType *pass_data)
     VIDEO->SR = 0x00;
 }
 
-
 static void spi_event_cb_fun(int32_t idx, spi_event_e event)
 {
     // printf("\nspi_event_cb_fun:%d\n",event);
@@ -214,52 +217,59 @@ static int wujian100_spi_init(int32_t idx) //idx->MY_USI_IDX
 
 static void wujian100_spi_test(void *args)
 {
-//    spi_handle_t handle = spi_t;
+    //    spi_handle_t handle = spi_t;
     int32_t ret;
     uint32_t i, j;
-	int frame_num=0;
+    int frame_num = 0;
 
     while (1)
     {
-		mdelay(50);
+        mdelay(50);
         // get data
-		Spidata_get(spi_img_data,frame_num%LENGTH);
-		frame_num++;
-//		if(frame_num==LENGTH) frame_num=0;
-		printf("%d\n",frame_num);
+        Spidata_get(spi_img_data, frame_num % LENGTH);
+        frame_num++;
+        printf("%d\n", frame_num);
 
-//        Videopass_get(spi_img_data);
-//		print_data(spi_img_data, TOTALBYTE);
+        // Videopass_get(spi_img_data);
+        // print_data(spi_img_data, TOTALBYTE);
 
-        // send
+        // frame beginning
         for (i = 0; i <= NBYTE; i++)
         {
             spi_single[i] = 0xFF;
         }
 
-//        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-//        mdelay(50);
+        // send
+        //        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+        //        mdelay(50);
 
         ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-//		print_data(spi_single,NBYTE+1);
-//        mdelay(5);
+        //		print_data(spi_single,NBYTE+1);
+        //        mdelay(5);
 
         spi_single[NBYTE] = 0xFE;
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
         {
             memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
-//			spi_single[NBYTE] = j+1;
-//			print_data(spi_single,NBYTE+1);
+            //			spi_single[NBYTE] = j+1;
+            //			print_data(spi_single,NBYTE+1);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-//            mdelay(500);
+            //            mdelay(500);
             if (ret < 0)
             {
                 printf("send fail\r\n");
                 mdelay(10000);
             }
         }
-//		print_data(spi_img_data, TOTALBYTE);
-//        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+
+        // frame end
+        for (i = 0; i <= NBYTE; i++)
+        {
+            spi_single[i] = 0xFD;
+        }
+        ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
+
+            //    csi_spi_ss_control(handle, SPI_SS_INACTIVE);
     }
 }
 
@@ -543,7 +553,7 @@ void print_data(ElementType *data, uint16_t n)
     uint16_t j;
     for (j = 0; j < n; j++)
     {
-        if ((j % LENGTH) == 0 && j!=0)
+        if ((j % LENGTH) == 0 && j != 0)
         {
             printf("\r\n");
         }
@@ -552,10 +562,13 @@ void print_data(ElementType *data, uint16_t n)
     printf("\r\n");
 }
 
-ElementType TransType(int32_t pos){
-	if(pos<0) return 0;
-	else if(pos>224) return 224;
-	return (ElementType)pos;
+ElementType TransType(int32_t pos)
+{
+    if (pos < 0)
+        return 0;
+    else if (pos > 224)
+        return 224;
+    return (ElementType)pos;
 }
 
 int main(void)
@@ -563,19 +576,19 @@ int main(void)
     printf("\n******************\n");
     printf("wujian100 startup!\n");
     wujian100_spi_init(MY_USI_IDX);
-	
-	#ifdef SPITEST
-		wujian100_spi_test(0);
-	#endif
-	
+
+#ifdef SPITEST
+    wujian100_spi_test(0);
+#endif
+
     spi_handle_t handle = spi_t;
     int32_t ret;
     // wujian100_spi_test(0);
 
-    uint32_t i,j;
+    uint32_t i, j;
     int32_t results[35];
     int last_class = -1;
-//    int number = -1;
+    //    int number = -1;
     int32_t x_min_224, y_min_224, x_max_224, y_max_224 = 0;
 
     while (1)
@@ -584,7 +597,7 @@ int main(void)
             ;
         Detect();
         SDMA->state = ((SDMA->state) & 0xfffffffd);
-//        printf("detecting done\r\n");
+        //        printf("detecting done\r\n");
 
         ACC_get_result(results);
         for (int i = 0; i < 5; ++i)
@@ -596,11 +609,11 @@ int main(void)
             float float_result_4 = (float)results[i * 7 + 5];
             int32_t obj_h = (int32_t)(float_result_4 / 14);
             int32_t obj_w = (int32_t)(results[i * 7 + 5] % 14);
-//            x_min_224 = (int32_t)(float_result_0 + obj_w * 16);
-//            y_min_224 = (int32_t)(float_result_1 + obj_h * 16);
-//            x_max_224 = (int32_t)(float_result_2 + obj_w * 16);
-//            y_max_224 = (int32_t)(float_result_3 + obj_h * 16);
-            
+            //            x_min_224 = (int32_t)(float_result_0 + obj_w * 16);
+            //            y_min_224 = (int32_t)(float_result_1 + obj_h * 16);
+            //            x_max_224 = (int32_t)(float_result_2 + obj_w * 16);
+            //            y_max_224 = (int32_t)(float_result_3 + obj_h * 16);
+
             int32_t x_min = (int32_t)(float_result_0 + obj_w * 16) * (640 / (float)224);
             int32_t y_min = (int32_t)(float_result_1 + obj_h * 16) * (360 / (float)224) + 60;
             int32_t x_max = (int32_t)(float_result_2 + obj_w * 16) * (640 / (float)224);
@@ -641,8 +654,8 @@ int main(void)
         }
 
         draw_rectangle(select_result, frame2_state);
-		
-//		printf("%x%x%x%x\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
+
+        //		printf("%x%x%x%x\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
 
         //get whole img
         Videopass_get(spi_img_data);
@@ -652,19 +665,18 @@ int main(void)
         {
             spi_single[i] = 0xFF;
         }
-		x_min_224 = (int32_t)select_result[frame2_state*7+0];
-		y_min_224 = (int32_t)select_result[frame2_state*7+1];
-		x_max_224 = (int32_t)select_result[frame2_state*7+2];
-		y_max_224 = (int32_t)select_result[frame2_state*7+3];
-//		printf("select: %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
-		
-		x_min_224 = (int32_t)x_min_224 * ((float)224 / 640 );
-		y_min_224 = (int32_t)(y_min_224-60) * ((float)224 / 360);
-		x_max_224 = (int32_t)x_max_224 * ((float)224 / 640);
-		y_max_224 = (int32_t)(y_max_224-60) * ((float)224 / 360);
-//		printf("224:   %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
-		
-		
+        x_min_224 = (int32_t)select_result[frame2_state * 7 + 0];
+        y_min_224 = (int32_t)select_result[frame2_state * 7 + 1];
+        x_max_224 = (int32_t)select_result[frame2_state * 7 + 2];
+        y_max_224 = (int32_t)select_result[frame2_state * 7 + 3];
+        //		printf("select: %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
+
+        x_min_224 = (int32_t)x_min_224 * ((float)224 / 640);
+        y_min_224 = (int32_t)(y_min_224 - 60) * ((float)224 / 360);
+        x_max_224 = (int32_t)x_max_224 * ((float)224 / 640);
+        y_max_224 = (int32_t)(y_max_224 - 60) * ((float)224 / 360);
+        //		printf("224:   %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
+
         spi_single[0] = TransType(x_min_224);
         spi_single[1] = TransType(y_min_224);
         spi_single[2] = TransType(x_max_224);
