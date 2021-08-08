@@ -94,19 +94,30 @@ ElementType spi_single[NBYTE + CBYTE] = {0};
 
 void Spidata_get(ElementType *pass_data, int frame_num)
 {
-    uint16_t i;
+    // uint16_t i;
+    // ElementType line_color = 0xFF;
+    // for (i = 0; i < LENGTH; i++)
+    // {
+    //     pass_data[i * LENGTH + frame_num] = line_color;
+    //     if (frame_num == 0)
+    //     {
+    //         pass_data[i * LENGTH + LENGTH - 1] = frame_num;
+    //     }
+    //     else
+    //     {
+    //         pass_data[i * LENGTH + frame_num - 1] = frame_num;
+    //     }
+    // }
+
+    uint16_t i, j;
     ElementType line_color = 0xFF;
-    for (i = 0; i < LENGTH; i++)
-    {
+    static ElementType back_color = 0x10;
+    back_color += 0x40;
+    for (i = 0; i < LENGTH; i++){
+        for (j = 0; j < LENGTH; j++){
+            pass_data[i * LENGTH + j] = back_color;
+        }
         pass_data[i * LENGTH + frame_num] = line_color;
-        if (frame_num == 0)
-        {
-            pass_data[i * LENGTH + LENGTH - 1] = frame_num;
-        }
-        else
-        {
-            pass_data[i * LENGTH + frame_num - 1] = frame_num;
-        }
     }
 }
 
@@ -227,11 +238,11 @@ static void wujian100_spi_test(void *args)
     {
         mdelay(30);
         // get data
-         Spidata_get(spi_img_data, frame_num % LENGTH);
+        Spidata_get(spi_img_data, frame_num % LENGTH);
         frame_num++;
         printf("%d\n", frame_num);
 
-//        Videopass_get(spi_img_data);
+        // Videopass_get(spi_img_data);
         // print_data(spi_img_data, TOTALBYTE);
 
         // frame beginning
@@ -252,10 +263,11 @@ static void wujian100_spi_test(void *args)
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
         {
             memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
-            spi_single[NBYTE] = j%0xFF;
+            spi_single[NBYTE] = j % 0xFF;
             // print_data(spi_single, NBYTE + 1);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-            //  mdelay(1);
+            // if (j % 150 == 0)
+            //     mdelay(1); 
             if (ret < 0)
             {
                 printf("send fail\r\n");
@@ -575,7 +587,7 @@ ElementType TransType(int32_t pos)
 
 int main(void)
 {
-    printf("\n******************\n");
+		printf("\n******************\n");
     printf("wujian100 startup!\n");
     wujian100_spi_init(MY_USI_IDX);
 
