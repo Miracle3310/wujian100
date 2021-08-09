@@ -236,13 +236,13 @@ static void wujian100_spi_test(void *args)
 
     while (1)
     {
-        mdelay(30);
+        mdelay(50);
         // get data
-        Spidata_get(spi_img_data, frame_num % LENGTH);
+        Videopass_get(spi_img_data);
+        // Spidata_get(spi_img_data, frame_num % LENGTH);
         frame_num++;
         printf("%d\n", frame_num);
 
-        // Videopass_get(spi_img_data);
         // print_data(spi_img_data, TOTALBYTE);
 
         // frame beginning
@@ -253,11 +253,8 @@ static void wujian100_spi_test(void *args)
 
         // send
         csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-        mdelay(5);
-
         ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-        // print_data(spi_single, NBYTE + 1);
-        //        mdelay(5);
+        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 
         spi_single[NBYTE+CBYTE-1] = 0xFE;
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
@@ -265,8 +262,15 @@ static void wujian100_spi_test(void *args)
             memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
             spi_single[NBYTE] = j % 0xFF;
             // print_data(spi_single, NBYTE + 1);
+            csi_spi_ss_control(handle, SPI_SS_ACTIVE);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-            // if (j % 150 == 0)
+            csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+            for (i = 0; i < 1; i++)
+            {
+                csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+                csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+            }
+            // if (j % 100 == 0)
             //     mdelay(1); 
             if (ret < 0)
             {
@@ -281,8 +285,8 @@ static void wujian100_spi_test(void *args)
             spi_single[i] = 0xFD;
         }
         // print_data(spi_single, NBYTE + 1);
+        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
         ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-
         csi_spi_ss_control(handle, SPI_SS_INACTIVE);
     }
 }
