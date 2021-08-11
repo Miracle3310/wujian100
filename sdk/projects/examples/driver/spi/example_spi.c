@@ -30,6 +30,7 @@
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
 
 #define SPITEST
+// #define SPITEST2
 
 typedef struct
 {
@@ -110,7 +111,7 @@ void Spidata_get(ElementType *pass_data, int frame_num)
     // }
 
     uint16_t i, j;
-    ElementType line_color = 0xFF;
+    ElementType line_color = 0xAA;
     static ElementType back_color = 0x10;
     back_color += 0x40;
     for (i = 0; i < LENGTH; i++){
@@ -265,7 +266,71 @@ static void wujian100_spi_test(void *args)
             csi_spi_ss_control(handle, SPI_SS_ACTIVE);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
             csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-            for (i = 0; i < 1; i++)
+            for (i = 0; i < 0; i++)
+            {
+                csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+                csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+            }
+            // if (j % 100 == 0)
+            //     mdelay(1); 
+            if (ret < 0)
+            {
+                printf("send fail\r\n");
+                mdelay(10000);
+            }
+        }
+
+        // frame end
+        for (i = 0; i < NBYTE + CBYTE; i++)
+        {
+            spi_single[i] = 0xFD;
+        }
+        // print_data(spi_single, NBYTE + 1);
+        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+        ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
+        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+    }
+}
+
+static void wujian100_spi_test_2(void *args)
+{
+    spi_handle_t handle = spi_t;
+    int32_t ret;
+    uint32_t i, j;
+    int frame_num = 0;
+
+    while (1)
+    {
+        mdelay(50);
+        // get data
+        // Videopass_get(spi_img_data);
+        Spidata_get(spi_img_data, frame_num % LENGTH);
+        frame_num++;
+        printf("%d\n", frame_num);
+
+        // print_data(spi_img_data, TOTALBYTE);
+
+        // frame beginning
+        for (i = 0; i < NBYTE + CBYTE; i++)
+        {
+            spi_single[i] = 0xFF;
+        }
+
+        // send
+        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+        ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
+        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+
+        // spi_single[NBYTE+CBYTE-1] = 0xFE;
+        for (j = 0; j < (TOTALBYTE / NBYTE); j++)
+        {
+            memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
+            // spi_single[NBYTE] = j % 0xFF;
+            // print_data(spi_single, NBYTE + 1);
+            csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+            ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
+            csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+            for (i = 0; i < 20; i++)
             {
                 csi_spi_ss_control(handle, SPI_SS_ACTIVE);
                 csi_spi_ss_control(handle, SPI_SS_INACTIVE);
@@ -599,14 +664,15 @@ int main(void)
     wujian100_spi_test(0);
 #endif
 
+#ifdef SPITEST2
+    wujian100_spi_test_2(0);
+#endif
+
     spi_handle_t handle = spi_t;
     int32_t ret;
-    // wujian100_spi_test(0);
-
     uint32_t i, j;
     int32_t results[35];
     int last_class = -1;
-    //    int number = -1;
     int32_t x_min_224, y_min_224, x_max_224, y_max_224 = 0;
 
     while (1)
@@ -650,8 +716,6 @@ int main(void)
         for (int i = 0; i < 7; ++i)
             select_result[i] = results[i];
         last_class = print_class(select_result[6], last_class);
-        //			printf("%u\t",select_result[6]);
-        //			printf("%u\t",1);
         for (int i = 1; i < 5; ++i)
         {
             if (frame2_state)
@@ -671,57 +735,68 @@ int main(void)
             }
         }
 
-        draw_rectangle(select_result, frame2_state);
-
-        //		printf("%x%x%x%x\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
+        // draw_rectangle(select_result, frame2_state);
 
         //get whole img
         Videopass_get(spi_img_data);
 
-        //get acc result
-        for (i = 0; i <= NBYTE; i++)
+        // frame beginning
+        for (i = 0; i < NBYTE + CBYTE; i++)
         {
             spi_single[i] = 0xFF;
         }
+
+        //get acc result
         x_min_224 = (int32_t)select_result[frame2_state * 7 + 0];
         y_min_224 = (int32_t)select_result[frame2_state * 7 + 1];
         x_max_224 = (int32_t)select_result[frame2_state * 7 + 2];
         y_max_224 = (int32_t)select_result[frame2_state * 7 + 3];
-        //		printf("select: %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
-
+        // printf("select: %d %d %d %d\n\r", x_min_224, y_min_224, x_max_224, y_max_224);
         x_min_224 = (int32_t)x_min_224 * ((float)224 / 640);
         y_min_224 = (int32_t)(y_min_224 - 60) * ((float)224 / 360);
         x_max_224 = (int32_t)x_max_224 * ((float)224 / 640);
         y_max_224 = (int32_t)(y_max_224 - 60) * ((float)224 / 360);
-        //		printf("224:   %d %d %d %d\n\r",x_min_224,y_min_224,x_max_224,y_max_224);
-
+        // printf("224:   %d %d %d %d\n\r", x_min_224, y_min_224, x_max_224, y_max_224);
         spi_single[0] = TransType(x_min_224);
         spi_single[1] = TransType(y_min_224);
         spi_single[2] = TransType(x_max_224);
         spi_single[3] = TransType(y_max_224);
         spi_single[4] = (ElementType)select_result[6];
-
         print_data(spi_single, 5);
 
-        //spi send
+        // send
         csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-        mdelay(5);
+        ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
+        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 
-        ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-        mdelay(5);
-
-        spi_single[NBYTE] = 0xFE;
+        spi_single[NBYTE+CBYTE-1] = 0xFE;
         for (j = 0; j < (TOTALBYTE / NBYTE); j++)
         {
             memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
-            ret = csi_spi_send(spi_t, spi_single, NBYTE + 1);
-            mdelay(6);
+            spi_single[NBYTE] = j % 0xFF;
+            csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+            ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
+            csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+            for (i = 0; i < 1; i++)
+            {
+                csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+                csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+            }
             if (ret < 0)
             {
                 printf("send fail\r\n");
                 mdelay(10000);
             }
         }
+
+        // frame end
+        for (i = 0; i < NBYTE + CBYTE; i++)
+        {
+            spi_single[i] = 0xFD;
+        }
+        // print_data(spi_single, NBYTE + 1);
+        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+        ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
         csi_spi_ss_control(handle, SPI_SS_INACTIVE);
     }
 }
