@@ -10,6 +10,8 @@
 #include "stdio.h"
 #include <pin.h>
 #include <string.h>
+#include "jfif.h"
+#include "bmp.h"
 
 #define VIDEO ((VIDEOPASSType *)VIDEO_BASE)
 #define ACC ((HALFSQUEEZENETType *)ACC_BASE)

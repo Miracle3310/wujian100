@@ -349,6 +349,72 @@
   <MonitorProgress>
     <DebugLaunch>35</DebugLaunch>
   </MonitorProgress>
+  <DebugSessions>
+    <watchExpressions/>
+    <memoryExpressions>;;;</memoryExpressions>
+    <statistics>;;MHZ;</statistics>
+    <peripheralTabs/>
+    <WatchDisplayFormat>1</WatchDisplayFormat>
+    <LocalDisplayFormat>1</LocalDisplayFormat>
+    <debugLayout/>
+    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
+  </DebugSessions>
+  <VirtualDirectory Name="jpeg">
+    <File Name="../jpeg/bitstr.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/bitstr.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/bmp.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/bmp.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/color.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/color.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/dct.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/dct.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/ffjpeg.c" ExcludeProjConfig="BuildSet">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/huffman.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/huffman.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/jfif.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/jfif.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/quant.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/quant.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/stdefine.h">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/zigzag.c">
+      <FileOption/>
+    </File>
+    <File Name="../jpeg/zigzag.h">
+      <FileOption/>
+    </File>
+  </VirtualDirectory>
   <BuildConfigs>
     <BuildConfig Name="BuildSet">
       <Target>
@@ -448,7 +514,7 @@
         <Undefine/>
         <Optim>Optimize size (-Os)</Optim>
         <DebugLevel>Maximum (-g3)</DebugLevel>
-        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;;$(ProjectPath)/../../../../../board/wujian100_open_evb/include;;;;;;;;;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs</IncludePath>
+        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../board/wujian100_open_evb/include;$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../jpeg</IncludePath>
         <OtherFlags>-ffunction-sections -fdata-sections</OtherFlags>
         <Verbose>no</Verbose>
         <Ansi>no</Ansi>
@@ -464,7 +530,7 @@
       <Asm>
         <Define/>
         <Undefine/>
-        <IncludePath>$(ProjectPath);;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs</IncludePath>
+        <IncludePath>;$(ProjectPath);$(ProjectPath)/../../../../../../../ffjpeg/src;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../jpeg</IncludePath>
         <OtherFlags/>
         <DebugLevel>gdwarf2</DebugLevel>
       </Asm>
@@ -541,14 +607,4 @@
       </Flash>
     </BuildConfig>
   </BuildConfigs>
-  <DebugSessions>
-    <watchExpressions/>
-    <memoryExpressions>;;;</memoryExpressions>
-    <statistics>;;MHZ;</statistics>
-    <peripheralTabs/>
-    <WatchDisplayFormat>1</WatchDisplayFormat>
-    <LocalDisplayFormat>1</LocalDisplayFormat>
-    <debugLayout/>
-    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
-  </DebugSessions>
 </Project>
