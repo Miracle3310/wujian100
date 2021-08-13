@@ -31,8 +31,9 @@
 #define NCHANNEL 1
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
 
-#define SPITEST
+// #define SPITEST
 // #define SPITEST2
+#define JPEGTEST
 
 typedef struct
 {
@@ -358,6 +359,20 @@ static void wujian100_spi_test_2(void *args)
     }
 }
 
+static void wujian100_jpeg_test(void *args){
+    BMP bmp = {0};
+    void *jfif = NULL;
+    Spidata_get(spi_img_data,1);
+    bmp_create(&bmp,112,112);
+    bmp.pdata = &spi_img_data;
+    // jfif = jfif_encode(&bmp);
+    // bmp_free(&bmp);
+    // jfif_save(jfif, "encode.jpg");
+    // jfif_free(&jfif);
+    while (1)
+        ;
+}
+
 //SDMA AND ACC CONFIG
 void Halfsqueezenet_Start()
 {
@@ -658,16 +673,18 @@ ElementType TransType(int32_t pos)
 
 int main(void)
 {
-		printf("\n******************\n");
+    printf("\n******************\n");
     printf("wujian100 startup!\n");
     wujian100_spi_init(MY_USI_IDX);
 
 #ifdef SPITEST
     wujian100_spi_test(0);
 #endif
-
 #ifdef SPITEST2
     wujian100_spi_test_2(0);
+#endif
+#ifdef JPEGTEST
+    wujian100_jpeg_test(0);
 #endif
 
     spi_handle_t handle = spi_t;
