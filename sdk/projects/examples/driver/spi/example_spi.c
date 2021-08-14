@@ -28,7 +28,7 @@
 #define LENGTH 112
 #define NBYTE 4
 #define CBYTE 2 // check byte
-#define NCHANNEL 1
+#define NCHANNEL 2
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
 
 // #define SPITEST
@@ -93,35 +93,26 @@ extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
 void print_data(ElementType *data, uint16_t n);
-ElementType spi_img_data[TOTALBYTE + 1] = {0};
+ElementType spi_img_data[TOTALBYTE] = {0};
 ElementType spi_single[NBYTE + CBYTE] = {0};
 
 void Spidata_get(ElementType *pass_data, int frame_num)
 {
-    // uint16_t i;
-    // ElementType line_color = 0xFF;
-    // for (i = 0; i < LENGTH; i++)
-    // {
-    //     pass_data[i * LENGTH + frame_num] = line_color;
-    //     if (frame_num == 0)
-    //     {
-    //         pass_data[i * LENGTH + LENGTH - 1] = frame_num;
-    //     }
-    //     else
-    //     {
-    //         pass_data[i * LENGTH + frame_num - 1] = frame_num;
-    //     }
-    // }
-
     uint16_t i, j;
-    ElementType line_color = 0xAA;
-    static ElementType back_color = 0x10;
-    back_color += 0x40;
+    // ElementType line_color = 0xAA;
+    // static ElementType back_color = 0x10;
+    // back_color += 0x40;
+    // for (i = 0; i < LENGTH; i++){
+    //     for (j = 0; j < LENGTH; j++){
+    //         pass_data[i * LENGTH + j] = back_color;
+    //     }
+    //     pass_data[i * LENGTH + frame_num] = line_color;
+    // }
     for (i = 0; i < LENGTH; i++){
         for (j = 0; j < LENGTH; j++){
-            pass_data[i * LENGTH + j] = back_color;
+            pass_data[i * LENGTH * NCHANNEL + j * 2] = 0xf8;
+            pass_data[i * LENGTH * NCHANNEL + j * 2 + 1] = 0x1f;
         }
-        pass_data[i * LENGTH + frame_num] = line_color;
     }
 }
 
@@ -133,55 +124,43 @@ void Videopass_get(ElementType *pass_data)
     uint32_t temp_data;
     VIDEO->SR = 0x01;
 
-    switch (LENGTH)
+    switch (NCHANNEL)
     {
-    case (56):
+    case (1):
         for (i = 0; i < LENGTH; i++)
         {
             for (j = 0; j < 56; j++)
             {
-                VIDEO->IR = i * 4 * 56 + j;
+                VIDEO->IR = i * (224 / LENGTH) * 56 + j;
                 while (VIDEO->SR != 0x03)
                     ;
                 temp_data = VIDEO->OR;
-                pass_data[i * LENGTH + j] = (temp_data & 0XFF);
-            }
-        }
-        break;
-    case (112):
-        for (i = 0; i < LENGTH; i++)
-        {
-            for (j = 0; j < 56; j++)
-            {
-                VIDEO->IR = i * 2 * 56 + j;
-                while (VIDEO->SR != 0x03)
-                    ;
-                temp_data = VIDEO->OR;
-                for (k = 0; k < 2; k++)
+                for (k = 0; k < (LENGTH / 56); k++)
                 {
-                    pass_data[i * LENGTH + j * 2 + k] = (temp_data >> (16 * k)) & 0XFF;
+                    pass_data[i * LENGTH + j * (LENGTH / 56) + k] = (temp_data >> ((32 * 56 / LENGTH) * k)) & 0XFF;
                 }
             }
         }
         break;
-    case (224):
+    case (2):
         for (i = 0; i < LENGTH; i++)
         {
-            for (j = 0; j < 56; j++)
+            for (j = 0; j < 112; j++)
             {
-                VIDEO->IR = i * 56 + j;
+                VIDEO->IR = i * (224 / LENGTH) * 112 + j;
                 while (VIDEO->SR != 0x03)
                     ;
                 temp_data = VIDEO->OR;
-                for (k = 0; k < 4; k++)
+                for (k = 0; k < (LENGTH / 56); k++)
                 {
-                    pass_data[i * LENGTH + j * 4 + k] = (temp_data >> (8 * k)) & 0XFF;
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data) & (0XFF000000 >> 8*k);
                 }
             }
         }
         break;
     default:
-        printf("Not supported length\r\n");
+        printf("Not supported\n");
+        break;
     }
 
     VIDEO->SR = 0x00;
@@ -240,7 +219,7 @@ static void wujian100_spi_test(void *args)
 
     while (1)
     {
-        mdelay(50);
+        mdelay(30);
         // get data
         Videopass_get(spi_img_data);
         // Spidata_get(spi_img_data, frame_num % LENGTH);
@@ -268,12 +247,12 @@ static void wujian100_spi_test(void *args)
             // print_data(spi_single, NBYTE + 1);
             csi_spi_ss_control(handle, SPI_SS_ACTIVE);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-            csi_spi_ss_control(handle, SPI_SS_INACTIVE);
             for (i = 0; i < 0; i++)
             {
-                csi_spi_ss_control(handle, SPI_SS_ACTIVE);
                 csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+                csi_spi_ss_control(handle, SPI_SS_ACTIVE);
             }
+            csi_spi_ss_control(handle, SPI_SS_INACTIVE);
             // if (j % 100 == 0)
             //     mdelay(1); 
             if (ret < 0)
