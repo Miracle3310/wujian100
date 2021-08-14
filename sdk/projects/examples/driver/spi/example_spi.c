@@ -98,28 +98,28 @@ ElementType spi_single[NBYTE + CBYTE] = {0};
 
 void Spidata_get(ElementType *pass_data, int frame_num)
 {
-    uint16_t i, j;
-    // ElementType line_color = 0xAA;
-    // static ElementType back_color = 0x10;
-    // back_color += 0x40;
-    // for (i = 0; i < LENGTH; i++){
-    //     for (j = 0; j < LENGTH; j++){
-    //         pass_data[i * LENGTH + j] = back_color;
-    //     }
-    //     pass_data[i * LENGTH + frame_num] = line_color;
+    uint16_t i, j, k;
+    ElementType *color;
+    *color = (frame_num & 0b111) << 5;
+    memset(pass_data, *color, TOTALBYTE);
+    
+    /*if more complicated test patterns are needed*/
+    // color = (ElementType *)malloc(NCHANNEL);
+    // for (i = 0; i < NCHANNEL; i++){
+    //     color[i] = frame << 8;
     // }
-    for (i = 0; i < LENGTH; i++){
-        for (j = 0; j < LENGTH; j++){
-            pass_data[i * LENGTH * NCHANNEL + j * 2] = 0xf8;
-            pass_data[i * LENGTH * NCHANNEL + j * 2 + 1] = 0x1f;
-        }
-    }
+    // for (i = 0; i < LENGTH; i++)
+    // {
+    //     for (j = 0; j < LENGTH; j++)
+    //     {
+    //         for (k = 0; k < NCHANNEL; k++)
+    //             pass_data[i * LENGTH * NCHANNEL + j * NCHANNEL + k] = *color;
+    //     }
+    // }
 }
 
 void Videopass_get(ElementType *pass_data)
 {
-    //	uint16_t row=56;
-    //	uint16_t col=224;
     uint16_t i, j, k;
     uint32_t temp_data;
     VIDEO->SR = 0x01;
@@ -158,8 +158,36 @@ void Videopass_get(ElementType *pass_data)
             }
         }
         break;
-    default:
-        printf("Not supported\n");
+    case(3): // not optimized for 224 (half effciency and not completed)
+        // for (i = 0; i < LENGTH; i++){
+        //     for (j = 0; j < LENGTH; j++){
+        //         VIDEO->IR = i * (224 / LENGTH) * 112 + int(j / 2) * (224 / LENGTH);
+        //         while (VIDEO->SR != 0x03)
+        //             ;
+        //         temp_data = VIDEO->OR;
+        //         pass_data[i * LENGTH * NCHANNEL + j * NCHANNEL + 0] = (temp_data) & (0XFF000000 >> 8 * k);
+        //         pass_data[i * LENGTH * NCHANNEL + j * NCHANNEL + 1] = (temp_data) & (0XFF000000 >> 8 * k);
+        //         pass_data[i * LENGTH * NCHANNEL + j * NCHANNEL + 2] = (temp_data) & (0XFF000000 >> 8 * k);
+        //         }
+        //     }
+        // }
+
+        // 112 only
+        for (i = 0; i < LENGTH; i++)
+        {
+            for (j = 0; j < 112; j++) // BRAM horizontal address range: 112
+            {
+                VIDEO->IR = i * (224 / LENGTH) * 112 + j;
+                while (VIDEO->SR != 0x03)
+                    ;
+                temp_data = VIDEO->OR;
+                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 0] = (temp_data) & (0b1111100000000000 >> 8 );
+                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 1] = (temp_data) & (0b0000011111100000 >> 2 );
+                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 2] = (temp_data) & (0b0000000000011111 << 3 );
+            }
+        }
+        default:
+            printf("Not supported\n");
         break;
     }
 
@@ -222,7 +250,7 @@ static void wujian100_spi_test(void *args)
         mdelay(30);
         // get data
         Videopass_get(spi_img_data);
-        // Spidata_get(spi_img_data, frame_num % LENGTH);
+        // Spidata_get(spi_img_data, frame_num);
         frame_num++;
         printf("%d\n", frame_num);
 
@@ -286,7 +314,7 @@ static void wujian100_spi_test_2(void *args)
         mdelay(50);
         // get data
         // Videopass_get(spi_img_data);
-        Spidata_get(spi_img_data, frame_num % LENGTH);
+        Spidata_get(spi_img_data, frame_num);
         frame_num++;
         printf("%d\n", frame_num);
 
