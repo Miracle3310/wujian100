@@ -150,7 +150,7 @@ void Videopass_get(ElementType *pass_data)
                 temp_data = VIDEO->OR;
                 for (k = 0; k < (LENGTH / 56); k++)
                 {
-                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> (8 * (1-k))) & 0XFF;
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data) & (0XFF000000 >> 8*k);
                 }
             }
         }
@@ -244,7 +244,7 @@ static void wujian100_spi_test(void *args)
             // print_data(spi_single, NBYTE + 1);
             csi_spi_ss_control(handle, SPI_SS_ACTIVE);
             ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-            for (i = 0; i < 10; i++)
+            for (i = 0; i < 0; i++)
             {
                 csi_spi_ss_control(handle, SPI_SS_INACTIVE);
                 csi_spi_ss_control(handle, SPI_SS_ACTIVE);
