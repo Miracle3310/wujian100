@@ -28,7 +28,7 @@
 #define LENGTH 112
 #define NBYTE 4
 #define CBYTE 2 // check byte
-#define NCHANNEL 2
+#define NCHANNEL 3
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
 
 // #define SPITEST
@@ -158,7 +158,8 @@ void Videopass_get(ElementType *pass_data)
             }
         }
         break;
-    case(3): // not optimized for 224 (half effciency and not completed)
+    case(3):
+        /* not optimized for 224 (half effciency and not completed)*/
         // for (i = 0; i < LENGTH; i++){
         //     for (j = 0; j < LENGTH; j++){
         //         VIDEO->IR = i * (224 / LENGTH) * 112 + int(j / 2) * (224 / LENGTH);
@@ -172,7 +173,6 @@ void Videopass_get(ElementType *pass_data)
         //     }
         // }
 
-        // 112 only
         for (i = 0; i < LENGTH; i++)
         {
             for (j = 0; j < 112; j++) // BRAM horizontal address range: 112
@@ -181,14 +181,21 @@ void Videopass_get(ElementType *pass_data)
                 while (VIDEO->SR != 0x03)
                     ;
                 temp_data = VIDEO->OR;
-                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 0] = (temp_data) & (0b1111100000000000 >> 8 );
-                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 1] = (temp_data) & (0b0000011111100000 >> 2 );
-                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 2] = (temp_data) & (0b0000000000011111 << 3 );
+                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 0] = ((temp_data>>16) & (0b1111100000000000)) >> 8;
+                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 1] = ((temp_data>>16) & (0b0000011111100000)) >> 2;
+                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 2] = ((temp_data>>16) & (0b0000000000011111)) << 3;
+                if (LENGTH == 224)                                                                                          
+                {                                                                                                           
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 3] = ((temp_data) & (0b1111100000000000)) >> 8;
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 4] = ((temp_data) & (0b0000011111100000)) >> 2;
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 5] = ((temp_data) & (0b0000000000011111)) << 3;
+                }
             }
         }
+        break;
         default:
             printf("Not supported\n");
-        break;
+            break;
     }
 
     VIDEO->SR = 0x00;
