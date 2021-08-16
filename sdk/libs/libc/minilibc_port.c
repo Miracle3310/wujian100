@@ -25,7 +25,7 @@ __attribute__((weak)) int write(int __fd, __const void *__buf, int __n)
     return 0;
 }
 
-int fputc(int ch, FILE *stream)
+__attribute__((weak)) int fputc(int ch, FILE *stream)
 {
     (void)stream;
 

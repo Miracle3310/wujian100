@@ -19,7 +19,7 @@
 #define MY_SPI_CLK_RATE 9000000
 
 #define ElementType uint8_t
-#define LENGTH 112
+#define LENGTH 112 
 #define NBYTE 4
 #define CBYTE 2 // check byte
 #define NCHANNEL 3
@@ -32,7 +32,8 @@
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
-ElementType spi_img_data[TOTALBYTE] = {0};
+// ElementType spi_img_data[TOTALBYTE] = {0};
+ElementType *spi_img_data;
 ElementType spi_single[NBYTE + CBYTE] = {0};
 
 void Spidata_get(ElementType *pass_data, int frame_num)
@@ -335,18 +336,21 @@ static void wujian100_spi_test_2(void *args)
     }
 }
 
-static void wujian100_jpeg_test(void *args){
+static void wujian100_jpeg_test(void *args)
+{
     BMP bmp = {0};
     void *jfif = NULL;
-    Spidata_get(spi_img_data,1);
-    bmp_create(&bmp,112,112);
-    bmp.pdata = &spi_img_data;
-    jfif = jfif_encode(&bmp);
-    // bmp_free(&bmp);
-    // jfif_save(jfif, "encode.jpg");
-    // jfif_free(&jfif);
+    int count = 0;
     while (1)
-        ;
+    {
+        bmp_create(&bmp, LENGTH, LENGTH);
+        Spidata_get(bmp.pdata, 1);
+        jfif = jfif_encode(&bmp);
+        bmp_free(&bmp);
+        // jfif_save(jfif, "encode.jpg");
+        jfif_free(jfif);
+        printf("%d\n", count++);
+    }
 }
 
 int main(void)
