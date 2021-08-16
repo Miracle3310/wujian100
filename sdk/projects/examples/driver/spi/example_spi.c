@@ -341,7 +341,7 @@ static void wujian100_jpeg_test(void *args){
     Spidata_get(spi_img_data,1);
     bmp_create(&bmp,112,112);
     bmp.pdata = &spi_img_data;
-    // jfif = jfif_encode(&bmp);
+    jfif = jfif_encode(&bmp);
     // bmp_free(&bmp);
     // jfif_save(jfif, "encode.jpg");
     // jfif_free(&jfif);

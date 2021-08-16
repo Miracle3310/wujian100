@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 #define VIDEO ((VIDEOPASSType *)VIDEO_BASE)
 #define ACC ((HALFSQUEEZENETType *)ACC_BASE)
 #define SDMA ((SDMAType *)SDMA_BASE)
