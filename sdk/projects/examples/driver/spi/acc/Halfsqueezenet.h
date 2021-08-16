@@ -1,13 +1,10 @@
 #include <stdint.h>
-
 #define VIDEO ((VIDEOPASSType *)VIDEO_BASE)
 #define ACC ((HALFSQUEEZENETType *)ACC_BASE)
 #define SDMA ((SDMAType *)SDMA_BASE)
-
 #define ACC_BASE (0x40100000UL)
 #define SDMA_BASE (0x40020000UL)
 #define VIDEO_BASE (0x40010000UL)
-
 typedef struct
 {
     volatile uint32_t CONTROL_ADDR_AP_CTRL;                        //0x00
@@ -59,6 +56,32 @@ typedef struct
     volatile uint32_t SR;
     volatile uint32_t IR;
     volatile uint32_t OR;
-
 } VIDEOPASSType;
-
+void Halfsqueezenet_Start();
+void Halfsqueezenet_Reset();
+void Halfsqueezenet_Set_squeeze_Din(uint32_t Data);
+void Halfsqueezenet_Set_squeeze_Cin(uint32_t Data);
+void Halfsqueezenet_Set_squeeze_Cout(uint32_t Data);
+void Halfsqueezenet_Set_squeeze_weight_iterations(uint32_t Data);
+void Halfsqueezenet_Set_squeeze_factor_iterations(uint32_t Data);
+void Halfsqueezenet_Set_expand_Din(uint32_t Data);
+void Halfsqueezenet_Set_expand_Din_afterpool(uint32_t Data);
+void Halfsqueezenet_Set_expand_Cin(uint32_t Data);
+void Halfsqueezenet_Set_expand_Cout(uint32_t Data);
+void Halfsqueezenet_Set_expand_weight_iterations(uint32_t Data);
+void Halfsqueezenet_Set_expand_factor_iterations(uint32_t Data);
+void Halfsqueezenet_Set_whichFire(uint32_t Data);
+void Halfsqueezenet_Set_numReps(uint32_t Data);
+void ACC_transfer_weights();
+void ACC_transfer_stream();
+void ACC_set_whichIteration(uint32_t Data);
+void ACC_transfer_start();
+void ACC_get_result(int32_t *get_results);
+void weightsfactors_transfer(uint32_t iteration);
+void fire(uint32_t squeeze_din, uint32_t squeeze_cin, uint32_t squeeze_cout, uint32_t expand_din, uint32_t expand_din_afterpool, uint32_t expand_cin, uint32_t expand_cout, uint32_t whichfire, uint32_t iteration);
+void Detect();
+void draw_rectangle_enable();
+void draw_rectangle_disable();
+void draw_rectangle(int32_t *final_results, uint32_t frame_sel);
+int intersection(int x1_min, int x1_max, int x2_min, int x2_max);
+int print_class(int class_number, int last_class);

@@ -405,6 +405,20 @@
       <FileOption/>
     </File>
   </VirtualDirectory>
+  <DebugSessions>
+    <watchExpressions/>
+    <memoryExpressions>;;;</memoryExpressions>
+    <statistics>;;MHZ;</statistics>
+    <peripheralTabs/>
+    <WatchDisplayFormat>1</WatchDisplayFormat>
+    <LocalDisplayFormat>1</LocalDisplayFormat>
+    <debugLayout/>
+    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
+  </DebugSessions>
+  <VirtualDirectory Name="acc">
+    <File Name="../acc/Halfsqueezenet.c"/>
+    <File Name="../acc/Halfsqueezenet.h"/>
+  </VirtualDirectory>
   <BuildConfigs>
     <BuildConfig Name="BuildSet">
       <Target>
@@ -504,7 +518,7 @@
         <Undefine/>
         <Optim>Optimize size (-Os)</Optim>
         <DebugLevel>Maximum (-g3)</DebugLevel>
-        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../board/wujian100_open_evb/include;$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../jpeg</IncludePath>
+        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../board/wujian100_open_evb/include;$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
         <OtherFlags>-ffunction-sections -fdata-sections</OtherFlags>
         <Verbose>no</Verbose>
         <Ansi>no</Ansi>
@@ -520,7 +534,7 @@
       <Asm>
         <Define/>
         <Undefine/>
-        <IncludePath>;$(ProjectPath);$(ProjectPath)/../../../../../../../ffjpeg/src;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../jpeg</IncludePath>
+        <IncludePath>;$(ProjectPath);$(ProjectPath)/../../../../../../../ffjpeg/src;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
         <OtherFlags/>
         <DebugLevel>gdwarf2</DebugLevel>
       </Asm>
@@ -597,14 +611,4 @@
       </Flash>
     </BuildConfig>
   </BuildConfigs>
-  <DebugSessions>
-    <watchExpressions/>
-    <memoryExpressions>;;;</memoryExpressions>
-    <statistics>;;MHZ;</statistics>
-    <peripheralTabs/>
-    <WatchDisplayFormat>1</WatchDisplayFormat>
-    <LocalDisplayFormat>1</LocalDisplayFormat>
-    <debugLayout/>
-    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
-  </DebugSessions>
 </Project>

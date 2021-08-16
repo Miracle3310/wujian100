@@ -32,18 +32,17 @@
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
-void print_data(ElementType *data, uint16_t n);
 ElementType spi_img_data[TOTALBYTE] = {0};
 ElementType spi_single[NBYTE + CBYTE] = {0};
 
 void Spidata_get(ElementType *pass_data, int frame_num)
 {
-    uint16_t i, j, k;
     ElementType *color;
     *color = (frame_num & 0b111) << 5;
     memset(pass_data, *color, TOTALBYTE);
     
     /*if more complicated test patterns are needed*/
+    // uint16_t i, j, k;
     // color = (ElementType *)malloc(NCHANNEL);
     // for (i = 0; i < NCHANNEL; i++){
     //     color[i] = frame << 8;
@@ -139,6 +138,29 @@ void Videopass_get(ElementType *pass_data)
     }
 
     VIDEO->SR = 0x00;
+}
+
+static void print_data(ElementType *data, uint16_t n)
+{
+    uint16_t j;
+    for (j = 0; j < n; j++)
+    {
+        if ((j % LENGTH) == 0 && j != 0)
+        {
+            printf("\r\n");
+        }
+        printf("%x", data[j]);
+    }
+    printf("\r\n");
+}
+
+static ElementType TransType(int32_t pos)
+{
+    if (pos < 0)
+        return 0;
+    else if (pos > 224)
+        return 224;
+    return (ElementType)pos;
 }
 
 static void spi_event_cb_fun(int32_t idx, spi_event_e event)
@@ -325,29 +347,6 @@ static void wujian100_jpeg_test(void *args){
     // jfif_free(&jfif);
     while (1)
         ;
-}
-
-static void print_data(ElementType *data, uint16_t n)
-{
-    uint16_t j;
-    for (j = 0; j < n; j++)
-    {
-        if ((j % LENGTH) == 0 && j != 0)
-        {
-            printf("\r\n");
-        }
-        printf("%x", data[j]);
-    }
-    printf("\r\n");
-}
-
-static ElementType TransType(int32_t pos)
-{
-    if (pos < 0)
-        return 0;
-    else if (pos > 224)
-        return 224;
-    return (ElementType)pos;
 }
 
 int main(void)
