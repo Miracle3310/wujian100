@@ -22,18 +22,18 @@
 #define LENGTH 112 
 #define NBYTE 4
 #define CBYTE 2 // check byte
-#define NCHANNEL 3
+#define NCHANNEL 2
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
 
-// #define SPITEST
+#define SPITEST
 // #define SPITEST2
-#define JPEGTEST
+// #define JPEGTEST
 
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
-// ElementType spi_img_data[TOTALBYTE] = {0};
-ElementType *spi_img_data;
+ElementType spi_img_data[TOTALBYTE] = {0};
+// ElementType *spi_img_data;
 ElementType spi_single[NBYTE + CBYTE] = {0};
 
 void Spidata_get(ElementType *pass_data, int frame_num)
@@ -83,17 +83,32 @@ void Videopass_get(ElementType *pass_data)
         }
         break;
     case (2):
+        // for (i = 0; i < LENGTH; i++)
+        // {
+        //     for (j = 0; j < 112; j++)
+        //     {
+        //         VIDEO->IR = i * (224 / LENGTH) * 112 + j;
+        //         while (VIDEO->SR != 0x03)
+        //             ;
+        //         temp_data = VIDEO->OR;
+        //         for (k = 0; k < (LENGTH / 56); k++)
+        //         {
+        //             pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data) & (0XFF000000 >> 8*k);
+        //         }
+        //     }
+        // }
+        // break;
         for (i = 0; i < LENGTH; i++)
         {
             for (j = 0; j < 112; j++)
             {
                 VIDEO->IR = i * (224 / LENGTH) * 112 + j;
                 while (VIDEO->SR != 0x03)
-                    ;
+						;
                 temp_data = VIDEO->OR;
                 for (k = 0; k < (LENGTH / 56); k++)
                 {
-                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data) & (0XFF000000 >> 8*k);
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> (8 * (1-k))) & 0XFF;
                 }
             }
         }
