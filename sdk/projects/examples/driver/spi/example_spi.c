@@ -77,38 +77,24 @@ void Videopass_get(ElementType *pass_data)
                 temp_data = VIDEO->OR;
                 for (k = 0; k < (LENGTH / 56); k++)
                 {
-                    pass_data[i * LENGTH + j * (LENGTH / 56) + k] = (temp_data >> ((32 * 56 / LENGTH) * k)) & 0XFF;
+                    // pass_data[i * LENGTH + j * (LENGTH / 56) + k] = (temp_data >> ((32 * 56 / LENGTH) * k)) & 0XFF;
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> 8 * (3 - k));
                 }
             }
         }
         break;
     case (2):
-        // for (i = 0; i < LENGTH; i++)
-        // {
-        //     for (j = 0; j < 112; j++)
-        //     {
-        //         VIDEO->IR = i * (224 / LENGTH) * 112 + j;
-        //         while (VIDEO->SR != 0x03)
-        //             ;
-        //         temp_data = VIDEO->OR;
-        //         for (k = 0; k < (LENGTH / 56); k++)
-        //         {
-        //             pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data) & (0XFF000000 >> 8*k);
-        //         }
-        //     }
-        // }
-        // break;
         for (i = 0; i < LENGTH; i++)
         {
             for (j = 0; j < 112; j++)
             {
                 VIDEO->IR = i * (224 / LENGTH) * 112 + j;
                 while (VIDEO->SR != 0x03)
-						;
+                    ;
                 temp_data = VIDEO->OR;
                 for (k = 0; k < (LENGTH / 56); k++)
                 {
-                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> (8 * (1-k))) & 0XFF;
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> 8 * (3 - k));
                 }
             }
         }

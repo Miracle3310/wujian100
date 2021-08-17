@@ -349,7 +349,7 @@
   <MonitorProgress>
     <DebugLaunch>35</DebugLaunch>
   </MonitorProgress>
-  <VirtualDirectory Name="jpeg">
+  <VirtualDirectory Name="jpeg" ExcludeProjConfig="BuildSet">
     <File Name="../jpeg/bitstr.c">
       <FileOption/>
     </File>
@@ -405,7 +405,7 @@
       <FileOption/>
     </File>
   </VirtualDirectory>
-  <VirtualDirectory Name="acc">
+  <VirtualDirectory Name="acc" ExcludeProjConfig="">
     <File Name="../acc/Halfsqueezenet.c">
       <FileOption/>
     </File>
