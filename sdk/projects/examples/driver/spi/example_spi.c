@@ -25,7 +25,7 @@
 #define NCHANNEL 2
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
 
-#define SPITEST
+// #define SPITEST
 // #define JPEGTEST
 
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
@@ -37,9 +37,8 @@ ElementType acc_result[5] = {0xFF,0xFF,0xFF,0xFF,0xFF};
 
 void Spidata_get(ElementType *pass_data, int frame_num)
 {
-    ElementType *color;
-    *color = (frame_num & 0b111) << 5;
-    memset(pass_data, *color, TOTALBYTE);
+    ElementType color = (frame_num & 0b111) << 5;
+    memset(pass_data, color, TOTALBYTE);
     
     /*if more complicated test patterns are needed*/
     // uint16_t i, j, k;
@@ -258,20 +257,7 @@ static void wujian100_spi_send(void *args)
     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 }
 
-static void wujian100_spi_test(void *args)
-{
-    int frame_num = 0;
-    while (1)
-    {
-        // mdelay(30);
-        Videopass_get(spi_img_data);
-        // Spidata_get(spi_img_data, frame_num);
-        frame_num++;
-        printf("%d\n", frame_num);
-        wujian100_spi_send(0);
-    }
-}
-
+#ifdef JPEGTEST
 static void wujian100_jpeg_test(void *args)
 {
     BMP bmp = {0};
@@ -288,6 +274,7 @@ static void wujian100_jpeg_test(void *args)
         printf("%d\n", count++);
     }
 }
+#endif
 
 static void wujian100_get_acc_result(void *args)
 {
@@ -378,17 +365,21 @@ int main(void)
     printf("wujian100 startup!\n");
     wujian100_spi_init(MY_USI_IDX);
 
-#ifdef SPITEST
-    wujian100_spi_test(0);
-#endif
 #ifdef JPEGTEST
     wujian100_jpeg_test(0);
 #endif
 
+    int frame_num = 0;
+
     while (1)
     {
-        wujian100_get_acc_result(0);
+        printf("%d\n", frame_num++);
+        // wujian100_get_acc_result(0);
+#ifdef SPITEST
+        Spidata_get(spi_img_data, frame_num);
+#else
         Videopass_get(spi_img_data);
+#endif
         wujian100_spi_send(0);
     }
 }
