@@ -413,6 +413,129 @@
       <FileOption/>
     </File>
   </VirtualDirectory>
+  <DebugSessions>
+    <watchExpressions/>
+    <memoryExpressions>;;;</memoryExpressions>
+    <statistics>;;MHZ;</statistics>
+    <peripheralTabs/>
+    <WatchDisplayFormat>1</WatchDisplayFormat>
+    <LocalDisplayFormat>1</LocalDisplayFormat>
+    <debugLayout/>
+    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
+  </DebugSessions>
+  <VirtualDirectory Name="csi_kernel">
+    <VirtualDirectory Name="include">
+      <File Name="../../../../../csi_kernel/include/csi_kernel.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="rhino">
+      <VirtualDirectory Name="adapter">
+        <File Name="../../../../../csi_kernel/rhino/adapter/csi_rhino.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="arch">
+        <VirtualDirectory Name="include">
+          <File Name="../../../../../csi_kernel/rhino/arch/include/k_config.h"/>
+          <File Name="../../../../../csi_kernel/rhino/arch/include/k_types.h"/>
+          <File Name="../../../../../csi_kernel/rhino/arch/include/port.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="riscv">
+          <File Name="../../../../../csi_kernel/rhino/arch/riscv/cpu_impl.c"/>
+          <File Name="../../../../../csi_kernel/rhino/arch/riscv/csky_sched.c"/>
+          <File Name="../../../../../csi_kernel/rhino/arch/riscv/port_c.c"/>
+          <File Name="../../../../../csi_kernel/rhino/arch/riscv/port_s.S"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="board">
+        <File Name="../../../../../csi_kernel/rhino/board/board_cpu_pwr.c"/>
+        <File Name="../../../../../csi_kernel/rhino/board/board_cpu_pwr_rtc.c"/>
+        <File Name="../../../../../csi_kernel/rhino/board/board_cpu_pwr_systick.c"/>
+        <File Name="../../../../../csi_kernel/rhino/board/board_cpu_pwr_timer.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="common">
+        <File Name="../../../../../csi_kernel/rhino/common/k_atomic.c"/>
+        <File Name="../../../../../csi_kernel/rhino/common/k_atomic.h"/>
+        <File Name="../../../../../csi_kernel/rhino/common/k_cpuset.h"/>
+        <File Name="../../../../../csi_kernel/rhino/common/k_ffs.c"/>
+        <File Name="../../../../../csi_kernel/rhino/common/k_ffs.h"/>
+        <File Name="../../../../../csi_kernel/rhino/common/k_fifo.c"/>
+        <File Name="../../../../../csi_kernel/rhino/common/k_trace.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="core">
+        <VirtualDirectory Name="include">
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_api.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_bitmap.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_buf_queue.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_critical.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_default_config.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_endian.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_err.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_event.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_fifo.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_hook.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_internal.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_list.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_mm.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_mm_blk.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_mm_debug.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_mm_region.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_mutex.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_obj.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_queue.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_ringbuf.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_sched.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_sem.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_soc.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_stats.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_sys.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_task.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_task_sem.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_time.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_timer.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_trace.h"/>
+          <File Name="../../../../../csi_kernel/rhino/core/include/k_workqueue.h"/>
+        </VirtualDirectory>
+        <File Name="../../../../../csi_kernel/rhino/core/k_buf_queue.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_dyn_mem_proc.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_err.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_event.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_idle.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_mm.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_mm_blk.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_mm_debug.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_mutex.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_obj.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_pend.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_queue.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_ringbuf.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_sched.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_sem.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_stats.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_sys.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_task.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_task_sem.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_tick.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_time.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_timer.c"/>
+        <File Name="../../../../../csi_kernel/rhino/core/k_workqueue.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="driver">
+        <File Name="../../../../../csi_kernel/rhino/driver/coretim.h"/>
+        <File Name="../../../../../csi_kernel/rhino/driver/hook_impl.c"/>
+        <File Name="../../../../../csi_kernel/rhino/driver/hook_weak.c"/>
+        <File Name="../../../../../csi_kernel/rhino/driver/systick.c"/>
+        <File Name="../../../../../csi_kernel/rhino/driver/yoc_impl.c"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="pwrmgmt">
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/cpu_pwr_api.h"/>
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/cpu_pwr_config.h"/>
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/cpu_pwr_hal_lib.h"/>
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/cpu_pwr_lib.h"/>
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/cpu_tickless.h"/>
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/dl_list.h"/>
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/pwr_debug.h"/>
+        <File Name="../../../../../csi_kernel/rhino/pwrmgmt/pwr_state.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <BuildConfigs>
     <BuildConfig Name="BuildSet">
       <Target>
@@ -512,7 +635,7 @@
         <Undefine/>
         <Optim>Optimize size (-Os)</Optim>
         <DebugLevel>Maximum (-g3)</DebugLevel>
-        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../board/wujian100_open_evb/include;$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
+        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../board/wujian100_open_evb/include;$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../csi_kernel/rhino/arch/include;$(ProjectPath)/../../../../../csi_kernel/rhino/common;$(ProjectPath)/../../../../../csi_kernel/rhino/core/include;$(ProjectPath)/../../../../../csi_kernel/rhino/driver;$(ProjectPath)/../../../../../csi_kernel/rhino/pwrmgmt;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
         <OtherFlags>-ffunction-sections -fdata-sections</OtherFlags>
         <Verbose>no</Verbose>
         <Ansi>no</Ansi>
@@ -528,7 +651,7 @@
       <Asm>
         <Define/>
         <Undefine/>
-        <IncludePath>;$(ProjectPath);$(ProjectPath)/../../../../../../../ffjpeg/src;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
+        <IncludePath>;$(ProjectPath);$(ProjectPath)/../../../../../../../ffjpeg/src;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../csi_kernel/rhino/arch/include;$(ProjectPath)/../../../../../csi_kernel/rhino/common;$(ProjectPath)/../../../../../csi_kernel/rhino/core/include;$(ProjectPath)/../../../../../csi_kernel/rhino/driver;$(ProjectPath)/../../../../../csi_kernel/rhino/pwrmgmt;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
         <OtherFlags/>
         <DebugLevel>gdwarf2</DebugLevel>
       </Asm>
@@ -605,14 +728,4 @@
       </Flash>
     </BuildConfig>
   </BuildConfigs>
-  <DebugSessions>
-    <watchExpressions/>
-    <memoryExpressions>;;;</memoryExpressions>
-    <statistics>;;MHZ;</statistics>
-    <peripheralTabs/>
-    <WatchDisplayFormat>1</WatchDisplayFormat>
-    <LocalDisplayFormat>1</LocalDisplayFormat>
-    <debugLayout/>
-    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
-  </DebugSessions>
 </Project>

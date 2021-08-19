@@ -11,9 +11,10 @@
 #include "stdio.h"
 #include <pin.h>
 #include <string.h>
-#include "jfif.h"
-#include "bmp.h"
+// #include "jfif.h"
+// #include "bmp.h"
 #include "Halfsqueezenet.h"
+#include <csi_kernel.h>
 
 #define MY_USI_IDX 1 //select USI1
 #define MY_SPI_CLK_RATE 9000000
@@ -35,8 +36,10 @@ ElementType spi_img_data[TOTALBYTE] = {0};
 // ElementType *spi_img_data;
 ElementType acc_result[5] = {0xFF,0xFF,0xFF,0xFF,0xFF};
 
-void Spidata_get(ElementType *pass_data, int frame_num)
+void Spidata_get(ElementType *pass_data)
 {
+    static uint8_t frame_num = 0;
+    frame_num++;
     ElementType color = (frame_num & 0b111) << 5;
     memset(pass_data, color, TOTALBYTE);
     
@@ -163,6 +166,25 @@ static ElementType TransType(int32_t pos)
     return (ElementType)pos;
 }
 
+#ifdef JPEGTEST
+static void wujian100_jpeg_test(void *args)
+{
+    BMP bmp = {0};
+    void *jfif = NULL;
+    int count = 0;
+    while (1)
+    {
+        bmp_create(&bmp, LENGTH, LENGTH);
+        Spidata_get(bmp.pdata, 1);
+        jfif = jfif_encode(&bmp);
+        bmp_free(&bmp);
+        // jfif_save(jfif, "encode.jpg");
+        jfif_free(jfif);
+        printf("%d\n", count++);
+    }
+}
+#endif
+
 static void spi_event_cb_fun(int32_t idx, spi_event_e event)
 {
     // printf("\nspi_event_cb_fun:%d\n",event);
@@ -207,13 +229,19 @@ static int wujian100_spi_init(int32_t idx) //idx->MY_USI_IDX
     return 0;
 }
 
-static void wujian100_spi_send(void *args)
+static void wujian100_spi_send()
 {
     /***send spi_img_data and acc_result***/
     spi_handle_t handle = spi_t;
     int32_t ret;
     uint32_t i, j;
     ElementType spi_single[NBYTE + CBYTE] = {0};
+
+#ifdef SPITEST
+        Spidata_get(spi_img_data);
+#else
+        Videopass_get(spi_img_data);
+#endif
 
     // frame beginning
     spi_single[NBYTE + CBYTE - 1] = 0xFF;
@@ -257,26 +285,7 @@ static void wujian100_spi_send(void *args)
     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 }
 
-#ifdef JPEGTEST
-static void wujian100_jpeg_test(void *args)
-{
-    BMP bmp = {0};
-    void *jfif = NULL;
-    int count = 0;
-    while (1)
-    {
-        bmp_create(&bmp, LENGTH, LENGTH);
-        Spidata_get(bmp.pdata, 1);
-        jfif = jfif_encode(&bmp);
-        bmp_free(&bmp);
-        // jfif_save(jfif, "encode.jpg");
-        jfif_free(jfif);
-        printf("%d\n", count++);
-    }
-}
-#endif
-
-static void wujian100_get_acc_result(void *args)
+static void wujian100_get_acc_result()
 {
     int32_t results[35];
     int last_class = -1;
@@ -359,27 +368,38 @@ static void wujian100_get_acc_result(void *args)
     acc_result[4] = (ElementType)select_result[6];
 }
 
+int t_main(void)
+{
+#ifdef JPEGTEST
+    wujian100_jpeg_test(0);
+#endif
+
+    int frame_num = 0;
+    while (1)
+    {
+        printf("%d\n", frame_num++);
+        wujian100_get_acc_result();
+        wujian100_spi_send();
+    }
+}
+
+#define K_API_PARENT_PRIO    5
+#define APP_START_TASK_STK_SIZE 2048	
+
+k_task_handle_t t_main_task;
+
 int main(void)
 {
     printf("\n******************\n");
     printf("wujian100 startup!\n");
     wujian100_spi_init(MY_USI_IDX);
 
-#ifdef JPEGTEST
-    wujian100_jpeg_test(0);
-#endif
+    csi_kernel_init();
 
-    int frame_num = 0;
+    csi_kernel_task_new((k_task_entry_t)t_main, "t_main",
+                        0, K_API_PARENT_PRIO, 0, 0, APP_START_TASK_STK_SIZE, &t_main_task);
 
-    while (1)
-    {
-        printf("%d\n", frame_num++);
-        // wujian100_get_acc_result(0);
-#ifdef SPITEST
-        Spidata_get(spi_img_data, frame_num);
-#else
-        Videopass_get(spi_img_data);
-#endif
-        wujian100_spi_send(0);
-    }
+    csi_kernel_start();
+
+    return 0;
 }
