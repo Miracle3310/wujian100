@@ -336,12 +336,13 @@
           <File Name="../../../../../projects/examples/driver/spi/example_spi.c">
             <FileOption/>
           </File>
-          <File Name="../../../../../projects/examples/driver/spi/w25q64fv.c">
+          <File Name="../../../../../projects/examples/driver/spi/w25q64fv.c" ExcludeProjConfig="BuildSet">
             <FileOption/>
           </File>
           <File Name="../../../../../projects/examples/driver/spi/w25q64fv.h">
             <FileOption/>
           </File>
+          <File Name="../img_params.h"/>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
@@ -700,6 +701,24 @@
       </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>
+  <DebugSessions>
+    <watchExpressions/>
+    <memoryExpressions>;;;</memoryExpressions>
+    <statistics>;;MHZ;</statistics>
+    <peripheralTabs/>
+    <WatchDisplayFormat>1</WatchDisplayFormat>
+    <LocalDisplayFormat>1</LocalDisplayFormat>
+    <debugLayout/>
+    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
+  </DebugSessions>
+  <VirtualDirectory Name="video">
+    <File Name="../video/Video_get.c">
+      <FileOption/>
+    </File>
+    <File Name="../video/Video_get.h">
+      <FileOption/>
+    </File>
+  </VirtualDirectory>
   <BuildConfigs>
     <BuildConfig Name="BuildSet">
       <Target>
@@ -799,7 +818,7 @@
         <Undefine/>
         <Optim>Optimize size (-Os)</Optim>
         <DebugLevel>Maximum (-g3)</DebugLevel>
-        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../board/wujian100_open_evb/include;$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../csi_kernel/rhino/arch/include;$(ProjectPath)/../../../../../csi_kernel/rhino/common;$(ProjectPath)/../../../../../csi_kernel/rhino/core/include;$(ProjectPath)/../../../../../csi_kernel/rhino/driver;$(ProjectPath)/../../../../../csi_kernel/rhino/pwrmgmt;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
+        <IncludePath>$(ProjectPath);$(ProjectPath)/../../../../../board/wujian100_open_evb/include;$(ProjectPath)/../../../../../csi_core/include;$(ProjectPath)/../../../../../csi_driver/include;$(ProjectPath)/../../../../../csi_driver/wujian100_open/include;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../csi_kernel/rhino/arch/include;$(ProjectPath)/../../../../../csi_kernel/rhino/common;$(ProjectPath)/../../../../../csi_kernel/rhino/core/include;$(ProjectPath)/../../../../../csi_kernel/rhino/driver;$(ProjectPath)/../../../../../csi_kernel/rhino/pwrmgmt;$(ProjectPath)/../../../../../libs/include;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg;$(ProjectPath)/../video</IncludePath>
         <OtherFlags>-ffunction-sections -fdata-sections</OtherFlags>
         <Verbose>no</Verbose>
         <Ansi>no</Ansi>
@@ -815,7 +834,7 @@
       <Asm>
         <Define/>
         <Undefine/>
-        <IncludePath>;$(ProjectPath);$(ProjectPath)/../../../../../../../ffjpeg/src;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../csi_kernel/rhino/arch/include;$(ProjectPath)/../../../../../csi_kernel/rhino/common;$(ProjectPath)/../../../../../csi_kernel/rhino/core/include;$(ProjectPath)/../../../../../csi_kernel/rhino/driver;$(ProjectPath)/../../../../../csi_kernel/rhino/pwrmgmt;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg</IncludePath>
+        <IncludePath>;$(ProjectPath);$(ProjectPath)/../../../../../../../ffjpeg/src;$(ProjectPath)/../../../../../csi_kernel/include;$(ProjectPath)/../../../../../csi_kernel/rhino/arch/include;$(ProjectPath)/../../../../../csi_kernel/rhino/common;$(ProjectPath)/../../../../../csi_kernel/rhino/core/include;$(ProjectPath)/../../../../../csi_kernel/rhino/driver;$(ProjectPath)/../../../../../csi_kernel/rhino/pwrmgmt;$(ProjectPath)/../../../../../projects/examples/driver/spi/configs;$(ProjectPath)/../acc;$(ProjectPath)/../jpeg;$(ProjectPath)/../video</IncludePath>
         <OtherFlags/>
         <DebugLevel>gdwarf2</DebugLevel>
       </Asm>
@@ -892,14 +911,4 @@
       </Flash>
     </BuildConfig>
   </BuildConfigs>
-  <DebugSessions>
-    <watchExpressions/>
-    <memoryExpressions>;;;</memoryExpressions>
-    <statistics>;;MHZ;</statistics>
-    <peripheralTabs/>
-    <WatchDisplayFormat>1</WatchDisplayFormat>
-    <LocalDisplayFormat>1</LocalDisplayFormat>
-    <debugLayout/>
-    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
-  </DebugSessions>
 </Project>

@@ -1,11 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
-#define VIDEO ((VIDEOPASSType *)VIDEO_BASE)
 #define ACC ((HALFSQUEEZENETType *)ACC_BASE)
 #define SDMA ((SDMAType *)SDMA_BASE)
 #define ACC_BASE (0x40100000UL)
 #define SDMA_BASE (0x40020000UL)
-#define VIDEO_BASE (0x40010000UL)
 typedef struct
 {
     volatile uint32_t CONTROL_ADDR_AP_CTRL;                        //0x00
@@ -52,12 +50,6 @@ typedef struct
     volatile uint32_t rect_en;
     volatile uint32_t frame_select;
 } SDMAType;
-typedef struct
-{
-    volatile uint32_t SR;
-    volatile uint32_t IR;
-    volatile uint32_t OR;
-} VIDEOPASSType;
 void Halfsqueezenet_Start();
 void Halfsqueezenet_Reset();
 void Halfsqueezenet_Set_squeeze_Din(uint32_t Data);
