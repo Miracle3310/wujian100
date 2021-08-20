@@ -7,6 +7,7 @@
 
 #include "drv_gpio.h"
 #include "drv_spi.h"
+#include "drv_usart.h"
 #include "soc.h"
 #include "stdio.h"
 #include <pin.h>
@@ -16,7 +17,8 @@
 #include "Halfsqueezenet.h"
 #include <csi_kernel.h>
 
-#define MY_USI_IDX 1 //select USI1
+#define SPI_IDX 1 //select USI1
+#define UART_IDX 2
 #define MY_SPI_CLK_RATE 9000000
 
 #define ElementType uint8_t
@@ -32,6 +34,7 @@
 extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
+static usart_handle_t uart_t;
 ElementType spi_img_data[TOTALBYTE] = {0};
 // ElementType *spi_img_data;
 ElementType acc_result[5] = {0xFF,0xFF,0xFF,0xFF,0xFF};
@@ -198,7 +201,7 @@ void example_pin_spi_init(void)
     drv_pinmux_config(EXAMPLE_PIN_SPI_CS, EXAMPLE_PIN_SPI_CS_FUNC);
 }
 
-static int wujian100_spi_init(int32_t idx) //idx->MY_USI_IDX
+static int wujian100_spi_init(int32_t idx) //idx->SPI_IDX
 {
     int32_t ret;
 
@@ -227,6 +230,25 @@ static int wujian100_spi_init(int32_t idx) //idx->MY_USI_IDX
     }
 
     return 0;
+}
+
+static int wujian100_uart_init(int32_t idx){
+    int32_t ret;
+    uart_t = csi_usart_initialize(idx, NULL);
+    if (uart_t == NULL)
+    {
+        printf(" csi_usart_initialize failed\n");
+        return -1;
+    }
+    ret = csi_usart_config(uart_t, 9600, USART_MODE_ASYNCHRONOUS, USART_PARITY_NONE, USART_STOP_BITS_1, USART_DATA_BITS_8);
+    if (ret != 0)
+    {
+        printf("%s(), %d usart config error, %d\n", __func__, __LINE__, ret);
+        return -1;
+    }
+
+    return 0;
+
 }
 
 static void wujian100_spi_send()
@@ -368,6 +390,26 @@ static void wujian100_get_acc_result()
     acc_result[4] = (ElementType)select_result[6];
 }
 
+static void wujian100_uart_send(){
+    int32_t ret;
+    // uint8_t send_data[] = {0x7E, 0x03, 0x10, 0x13, 0xEF};
+    uint8_t send_data[] = {'h','e','l','l','o','\n'};
+    uint8_t recv_data[20] = {0};
+    // printf("start uart send\n");
+    // ret = csi_usart_send(uart_t, send_data, sizeof(send_data));
+    ret = csi_usart_receive(uart_t, recv_data, sizeof(recv_data));
+    // csi_usart_transfer(uart_t, send_data, recv_data, sizeof(send_data));
+    if (ret < 0)
+    {
+        printf("send fail\n");
+    }
+    print_data(recv_data, 20);
+    // for (int i = 0; i < sizeof(recv_data); i++){
+    //     printf("%s", recv_data[i]);
+    // }
+    // printf("\n");
+}
+
 int t_main(void)
 {
 #ifdef JPEGTEST
@@ -380,6 +422,8 @@ int t_main(void)
         printf("%d\n", frame_num++);
         wujian100_get_acc_result();
         wujian100_spi_send();
+        // wujian100_uart_send();
+        // mdelay(1000);
     }
 }
 
@@ -392,7 +436,8 @@ int main(void)
 {
     printf("\n******************\n");
     printf("wujian100 startup!\n");
-    wujian100_spi_init(MY_USI_IDX);
+    wujian100_spi_init(SPI_IDX);
+    wujian100_uart_init(UART_IDX);
 
     csi_kernel_init();
 
