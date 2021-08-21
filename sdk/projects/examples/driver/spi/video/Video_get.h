@@ -1,4 +1,6 @@
 #include <stdint.h>
+// #include "stdio.h"
+#include <string.h>
 #include "../img_params.h"
 
 #define VIDEO_BASE (0x40010000UL)
@@ -11,3 +13,8 @@ typedef struct
 } VIDEOPASSType;
 void Spidata_get(ElementType *pass_data);
 void Videopass_get(ElementType *pass_data);
+
+//++ for fixed point
+#define FIXQ          11
+#define FLOAT2FIX(f)  ((int)((f) * (1 << 11)))
+//-- for fixed point

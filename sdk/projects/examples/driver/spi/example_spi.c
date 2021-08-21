@@ -28,7 +28,6 @@
 // #define SPITEST
 // #define JPEGTEST
 
-
 #define K_API_PARENT_PRIO    5
 #define APP_START_TASK_STK_SIZE 2048	
 
@@ -177,7 +176,7 @@ static void wujian100_spi_send()
         // print_data(spi_single, NBYTE + 1);
         csi_spi_ss_control(handle, SPI_SS_ACTIVE);
         ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-        for (i = 0; i < 0; i++)
+        for (i = 0; i < 20; i++)
         {
             csi_spi_ss_control(handle, SPI_SS_INACTIVE);
             csi_spi_ss_control(handle, SPI_SS_ACTIVE);
@@ -329,6 +328,7 @@ int main(void)
     printf("wujian100 startup!\n");
     wujian100_spi_init(SPI_IDX);
     wujian100_uart_init(UART_IDX);
+    t_main();
 
     csi_kernel_init();
 

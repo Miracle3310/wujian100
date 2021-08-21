@@ -1,10 +1,5 @@
 #include "Video_get.h"
 
-//++ for fixed point
-#define FIXQ          11
-#define FLOAT2FIX(f)  ((int)((f) * (1 << 11)))
-//-- for fixed point
-
 void Spidata_get(ElementType *pass_data)
 {
     static uint8_t frame_num = 0;
@@ -133,7 +128,7 @@ void Videopass_get(ElementType *pass_data)
         }
         break;
         default:
-            printf("Not supported\n");
+            // printf("Not supported\n");
             break;
     }
 
