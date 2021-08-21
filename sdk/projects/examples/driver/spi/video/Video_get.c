@@ -1,4 +1,10 @@
 #include "Video_get.h"
+
+//++ for fixed point
+#define FIXQ          11
+#define FLOAT2FIX(f)  ((int)((f) * (1 << 11)))
+//-- for fixed point
+
 void Spidata_get(ElementType *pass_data)
 {
     static uint8_t frame_num = 0;
@@ -31,18 +37,46 @@ void Videopass_get(ElementType *pass_data)
     switch (NCHANNEL)
     {
     case (1):
+        /*for specific (BRAM 1 channel) .bit file*/
+        // for (i = 0; i < LENGTH; i++) 
+        // {
+        //     for (j = 0; j < 56; j++)
+        //     {
+        //         VIDEO->IR = i * (224 / LENGTH) * 56 + j;
+        //         while (VIDEO->SR != 0x03)
+        //             ;
+        //         temp_data = VIDEO->OR;
+        //         for (k = 0; k < (LENGTH / 56); k++)
+        //         {
+        //             // pass_data[i * LENGTH + j * (LENGTH / 56) + k] = (temp_data >> ((32 * 56 / LENGTH) * k)) & 0XFF;
+        //             pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> 8 * (3 - k));
+        //         }
+        //     }
+        // }
         for (i = 0; i < LENGTH; i++)
         {
-            for (j = 0; j < 56; j++)
+            for (j = 0; j < 112; j++) // BRAM horizontal address range: 112
             {
-                VIDEO->IR = i * (224 / LENGTH) * 56 + j;
+                VIDEO->IR = i * (224 / LENGTH) * 112 + j;
                 while (VIDEO->SR != 0x03)
                     ;
                 temp_data = VIDEO->OR;
-                for (k = 0; k < (LENGTH / 56); k++)
+                ElementType r, g, b;
+                int y;
+                r = ((temp_data >> 16) & (0b1111100000000000)) >> 8;
+                g = ((temp_data >> 16) & (0b0000011111100000)) >> 2;
+                b = ((temp_data >> 16) & (0b0000000000011111)) << 3;
+                y = FLOAT2FIX(0.2990f) * r + FLOAT2FIX(0.5870f) * g + FLOAT2FIX(0.1140f) * b - (128 << FIXQ);
+                y >>= FIXQ - 2;
+                pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 0] = (ElementType)y;
+                if (LENGTH == 224)
                 {
-                    // pass_data[i * LENGTH + j * (LENGTH / 56) + k] = (temp_data >> ((32 * 56 / LENGTH) * k)) & 0XFF;
-                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> 8 * (3 - k));
+                    r = ((temp_data) & (0b1111100000000000)) >> 8;
+                    g = ((temp_data) & (0b0000011111100000)) >> 2;
+                    b = ((temp_data) & (0b0000000000011111)) << 3;
+                    y = FLOAT2FIX(0.2990f) * r + FLOAT2FIX(0.5870f) * g + FLOAT2FIX(0.1140f) * b - (128 << FIXQ);
+                    y >>= FIXQ - 2;
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 1] = (ElementType)y;
                 }
             }
         }
