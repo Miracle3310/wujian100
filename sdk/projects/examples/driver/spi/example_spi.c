@@ -23,7 +23,7 @@
 
 #define SPI_IDX 1 //select USI1
 #define UART_IDX 2
-#define MY_SPI_CLK_RATE 9000000
+#define MY_SPI_CLK_RATE 8500000
 
 // #define SPITEST
 // #define JPEGTEST
@@ -81,10 +81,10 @@ static void wujian100_jpeg_test(void *args)
 }
 #endif
 
-// static void spi_event_cb_fun(int32_t idx, spi_event_e event)
-// {
-//     // printf("\nspi_event_cb_fun:%d\n",event);
-// }
+static void spi_event_cb_fun(int32_t idx, spi_event_e event)
+{
+    printf("\nspi_event_cb_fun:%d\n",event);
+}
 
 // void example_pin_spi_init(void)
 // {
@@ -102,8 +102,8 @@ static int wujian100_spi_init(int32_t idx) //idx->SPI_IDX
 
     // example_pin_spi_init(); //spi pin config
 
-    // spi_t = csi_spi_initialize(idx, spi_event_cb_fun);
-    spi_t = csi_spi_initialize(idx, NULL);
+    spi_t = csi_spi_initialize(idx, spi_event_cb_fun);
+    // spi_t = csi_spi_initialize(idx, NULL);
 
     if (spi_t == NULL)
     {
@@ -113,7 +113,7 @@ static int wujian100_spi_init(int32_t idx) //idx->SPI_IDX
 
     ret = csi_spi_config(spi_t, MY_SPI_CLK_RATE, SPI_MODE_MASTER,
                          SPI_FORMAT_CPOL0_CPHA0, SPI_ORDER_MSB2LSB,
-                         SPI_SS_MASTER_SW, sizeof(ElementType));
+                         SPI_SS_MASTER_SW, 8);
 
     ret = csi_spi_config_block_mode(spi_t, 1);
 
@@ -126,7 +126,8 @@ static int wujian100_spi_init(int32_t idx) //idx->SPI_IDX
     return 0;
 }
 
-static int wujian100_uart_init(int32_t idx){
+static int wujian100_uart_init(int32_t idx)
+{
     int32_t ret;
     uart_t = csi_usart_initialize(idx, NULL);
     if (uart_t == NULL)
@@ -142,7 +143,6 @@ static int wujian100_uart_init(int32_t idx){
     }
 
     return 0;
-
 }
 
 static void wujian100_spi_send()
@@ -154,9 +154,9 @@ static void wujian100_spi_send()
     ElementType spi_single[NBYTE + CBYTE] = {0};
 
 #ifdef SPITEST
-        Spidata_get(spi_img_data);
+    Spidata_get(spi_img_data);
 #else
-        Videopass_get(spi_img_data);
+    Videopass_get(spi_img_data);
 #endif
 
     // frame beginning
@@ -167,7 +167,7 @@ static void wujian100_spi_send()
     ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 
-    // frame 
+    // frame
     spi_single[NBYTE + CBYTE - 1] = 0xFE;
     for (j = 0; j < (TOTALBYTE / NBYTE); j++)
     {
@@ -284,10 +284,11 @@ static void wujian100_get_acc_result()
     acc_result[4] = (ElementType)select_result[6];
 }
 
-static void wujian100_uart_send(){
+static void wujian100_uart_send()
+{
     int32_t ret;
     // uint8_t send_data[] = {0x7E, 0x03, 0x10, 0x13, 0xEF};
-    uint8_t send_data[] = {'h','e','l','l','o','\n'};
+    uint8_t send_data[] = {'h', 'e', 'l', 'l', 'o', '\n'};
     uint8_t recv_data[20] = {0};
     // printf("start uart send\n");
     ret = csi_usart_send(uart_t, send_data, sizeof(send_data));
@@ -328,7 +329,7 @@ int main(void)
     printf("wujian100 startup!\n");
     wujian100_spi_init(SPI_IDX);
     wujian100_uart_init(UART_IDX);
-    t_main();
+    // t_main();
 
     csi_kernel_init();
 
