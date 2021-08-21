@@ -9,6 +9,7 @@
 #include "drv_spi.h"
 #include "drv_usart.h"
 #include "drv_dmac.h"
+#include <drv_irq.h>
 #include "soc.h"
 #include "stdio.h"
 #include <pin.h>
@@ -305,6 +306,17 @@ static void wujian100_uart_send()
     // printf("\n");
 }
 
+static void acc_irq_handle(void *args)
+{
+    printf("acc intr!\n");
+}
+
+static void wujian100_irq_init(uint32_t idx)
+{
+    drv_irq_register(idx, acc_irq_handle);
+    drv_irq_enable(idx);
+}
+
 int t_main(void)
 {
 #ifdef JPEGTEST
@@ -329,6 +341,7 @@ int main(void)
     printf("wujian100 startup!\n");
     wujian100_spi_init(SPI_IDX);
     wujian100_uart_init(UART_IDX);
+    wujian100_irq_init(43);
     t_main();
 
     // csi_kernel_init();
