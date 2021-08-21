@@ -13,7 +13,7 @@
 #include "stdio.h"
 #include <pin.h>
 #include <string.h>
-#include <csi_kernel.h>
+// #include <csi_kernel.h>
 
 // #include "jfif.h"
 // #include "bmp.h"
@@ -28,10 +28,10 @@
 // #define SPITEST
 // #define JPEGTEST
 
-#define K_API_PARENT_PRIO    5
-#define APP_START_TASK_STK_SIZE 2048	
+// #define K_API_PARENT_PRIO    5
+// #define APP_START_TASK_STK_SIZE 2048	
+// k_task_handle_t t_main_task;
 
-k_task_handle_t t_main_task;
 // extern int32_t drv_pinmux_config(pin_name_e pin, pin_func_e pin_func);
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
@@ -176,7 +176,7 @@ static void wujian100_spi_send()
         // print_data(spi_single, NBYTE + 1);
         csi_spi_ss_control(handle, SPI_SS_ACTIVE);
         ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-        for (i = 0; i < 20; i++)
+        for (i = 0; i < 0; i++)
         {
             csi_spi_ss_control(handle, SPI_SS_INACTIVE);
             csi_spi_ss_control(handle, SPI_SS_ACTIVE);
@@ -329,14 +329,14 @@ int main(void)
     printf("wujian100 startup!\n");
     wujian100_spi_init(SPI_IDX);
     wujian100_uart_init(UART_IDX);
-    // t_main();
+    t_main();
 
-    csi_kernel_init();
+    // csi_kernel_init();
 
-    csi_kernel_task_new((k_task_entry_t)t_main, "t_main",
-                        0, K_API_PARENT_PRIO, 0, 0, APP_START_TASK_STK_SIZE, &t_main_task);
+    // csi_kernel_task_new((k_task_entry_t)t_main, "t_main",
+    //                     0, K_API_PARENT_PRIO, 0, 0, APP_START_TASK_STK_SIZE, &t_main_task);
 
-    csi_kernel_start();
+    // csi_kernel_start();
 
     return 0;
 }

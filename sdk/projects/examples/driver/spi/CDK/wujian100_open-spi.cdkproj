@@ -416,7 +416,7 @@
       <FileOption/>
     </File>
   </VirtualDirectory>
-  <VirtualDirectory Name="csi_kernel">
+  <VirtualDirectory Name="csi_kernel" ExcludeProjConfig="BuildSet">
     <VirtualDirectory Name="include">
       <File Name="../../../../../csi_kernel/include/csi_kernel.h">
         <FileOption/>
