@@ -25,6 +25,7 @@
 #define SPI_IDX 1 //select USI1
 #define UART_IDX 2
 #define MY_SPI_CLK_RATE 8500000
+#define IRQ_ACC 43
 
 // #define SPITEST
 // #define JPEGTEST
@@ -37,6 +38,7 @@
 extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
 static usart_handle_t uart_t;
+static int acc_done_flag = 0;
 ElementType spi_img_data[TOTALBYTE] = {0};
 ElementType acc_result[5] = {0x0A,0x0A,0x0A,0x0A,0x0A};
 
@@ -92,7 +94,7 @@ static void wujian100_jpeg_test(void *args)
 
 static void spi_event_cb_fun(int32_t idx, spi_event_e event)
 {
-    printf("\nspi_event_cb_fun:%d\n",event);
+    // printf("\nspi_event_cb_fun:%d\n",event);
 }
 
 // void example_pin_spi_init(void)
@@ -211,12 +213,12 @@ static void wujian100_spi_send()
 static void wujian100_get_acc_result()
 {
     int32_t results[35];
-    int last_class = -1;
+    static int last_class = -1;
     int32_t x_min_224, y_min_224, x_max_224, y_max_224 = 0;
-    while (((SDMA->state) & 0x00000002) == 0)
-        ;
-    Detect();
-    SDMA->state = ((SDMA->state) & 0xfffffffd);
+    // while (((SDMA->state) & 0x00000002) == 0)
+    //     ;
+    // Detect();
+    // SDMA->state = ((SDMA->state) & 0xfffffffd);
     //        printf("detecting done\r\n");
 
     ACC_get_result(results);
@@ -314,7 +316,74 @@ static void wujian100_uart_send()
 
 static void acc_irq_handle(void *args)
 {
-    printf("acc intr!\n");
+    drv_irq_disable(IRQ_ACC);
+    static uint8_t count = 1;
+    static uint32_t count_print = 0;
+    // printf("acc intr! %d\n", count);
+    if (count == 0)
+    {
+        while (((SDMA->state) & 0x00000002) == 0)
+            ;
+        weightsfactors_transfer(0);
+    }
+    else
+    {
+        SDMA->state = ((SDMA->state) & 0xfffffffe);
+        switch (count)
+        {
+        case (1):
+            fire(56, 32, 32, 56, 28, 32, 96, 1, 0);
+            break;
+        case (2):
+            weightsfactors_transfer(1);
+            break;
+        case (3):
+            fire(28, 96, 32, 28, 14, 32, 96, 2, 1);
+            break;
+        case (4):
+            weightsfactors_transfer(2);
+            break;
+        case (5):
+            fire(14, 96, 32, 14, 14, 32, 96, 3, 2);
+            break;
+        case (6):
+            weightsfactors_transfer(3);
+            break;
+        case (7):
+            fire(14, 96, 32, 14, 14, 32, 96, 4, 3);
+            break;
+        case (8):
+            weightsfactors_transfer(4);
+            break;
+        case (9):
+            fire(14, 96, 32, 14, 14, 32, 96, 5, 4);
+            break;
+        case (10):
+            weightsfactors_transfer(5);
+            break;
+        case (11):
+            fire(14, 96, 32, 14, 14, 32, 96, 6, 5);
+            break;
+        case (12):
+            weightsfactors_transfer(6);
+            break;
+        case (13):
+            fire(14, 96, 32, 14, 14, 32, 96, 7, 6);
+            break;
+        case (14):
+            // printf("acc done\n");
+            // printf("%d\n", count_print++);
+            SDMA->state = ((SDMA->state) & 0xfffffffd);
+            acc_done_flag = 1;
+            while (((SDMA->state) & 0x00000002) == 0)
+                ;
+            weightsfactors_transfer(0);
+        }
+    }
+    if (14 == count++)
+        count = 15;
+    if (!acc_done_flag)
+        drv_irq_enable(IRQ_ACC);
 }
 
 static void wujian100_irq_init(uint32_t idx)
@@ -330,13 +399,23 @@ int t_main(void)
 #endif
 
     int frame_num = 0;
+    while (((SDMA->state) & 0x00000002) == 0)
+        ;
+    weightsfactors_transfer(0);
     while (1)
     {
         printf("%d\n", frame_num++);
-        wujian100_get_acc_result();
+        if (acc_done_flag){
+            // printf("%d\n", frame_num++);
+            // acc_done_flag = 0;
+            // drv_irq_disable(IRQ_ACC);
+            wujian100_get_acc_result();
+            acc_done_flag = 0;
+            drv_irq_enable(IRQ_ACC);
+        }
         wujian100_spi_send();
         // wujian100_uart_send();
-        // mdelay(1000);
+        // mdelay(120);
     }
     return 0;
 }
@@ -347,7 +426,7 @@ int main(void)
     printf("wujian100 startup!\n");
     wujian100_spi_init(SPI_IDX);
     wujian100_uart_init(UART_IDX);
-    // wujian100_irq_init(43);
+    wujian100_irq_init(IRQ_ACC);
     t_main();
 
     // csi_kernel_init();

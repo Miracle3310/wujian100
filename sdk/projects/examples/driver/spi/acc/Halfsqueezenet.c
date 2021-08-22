@@ -126,8 +126,8 @@ void weightsfactors_transfer(uint32_t iteration)
     ACC_set_whichIteration(iteration);
     //	printf("%u\t",iteration);
     ACC_transfer_start();
-    while (((SDMA->state) & 0x00000001) == 0)
-        ;
+    // while (((SDMA->state) & 0x00000001) == 0)
+    //     ;
 }
 
 void fire(uint32_t squeeze_din, uint32_t squeeze_cin, uint32_t squeeze_cout, uint32_t expand_din, uint32_t expand_din_afterpool, uint32_t expand_cin, uint32_t expand_cout, uint32_t whichfire, uint32_t iteration)
@@ -151,8 +151,8 @@ void fire(uint32_t squeeze_din, uint32_t squeeze_cin, uint32_t squeeze_cout, uin
     ACC_transfer_stream();
     ACC_set_whichIteration(iteration);
     ACC_transfer_start();
-    while (((SDMA->state) & 0x00000001) == 0)
-        ;
+    // while (((SDMA->state) & 0x00000001) == 0)
+    //     ;
 }
 
 void Detect()
