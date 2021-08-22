@@ -1,3 +1,5 @@
+#ifndef __acc__
+#define __acc__
 #include <stdint.h>
 #include <stdio.h>
 #define ACC ((HALFSQUEEZENETType *)ACC_BASE)
@@ -78,3 +80,4 @@ void draw_rectangle_disable();
 void draw_rectangle(int32_t *final_results, uint32_t frame_sel);
 int intersection(int x1_min, int x1_max, int x2_min, int x2_max);
 int print_class(int class_number, int last_class);
+#endif

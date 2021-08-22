@@ -27,8 +27,8 @@ void Videopass_get(ElementType *pass_data)
 {
     uint16_t i, j, k;
     uint32_t temp_data;
+    drv_irq_disable(IRQ_ACC);
     VIDEO->SR = 0x01;
-
     switch (NCHANNEL)
     {
     case (1):
@@ -128,9 +128,9 @@ void Videopass_get(ElementType *pass_data)
         }
         break;
         default:
-            // printf("Not supported\n");
+            printf("Not supported\n");
             break;
     }
-
     VIDEO->SR = 0x00;
+    drv_irq_enable(IRQ_ACC);
 }
