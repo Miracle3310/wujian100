@@ -176,7 +176,7 @@ static void wujian100_spi_send()
     csi_spi_ss_control(handle, SPI_SS_ACTIVE);
     ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-    print_data(spi_single, NBYTE + CBYTE);
+    // print_data(spi_single, NBYTE + CBYTE);
 
     // frame
     spi_single[NBYTE + CBYTE - 2] = 0x00;

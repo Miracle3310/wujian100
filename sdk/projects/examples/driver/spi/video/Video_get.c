@@ -59,18 +59,18 @@ void Videopass_get(ElementType *pass_data)
                 ElementType r, g, b;
                 int y;
                 r = ((temp_data >> 16) & (0b1111100000000000)) >> 8;
-                g = ((temp_data >> 16) & (0b0000011111100000)) >> 2;
+                g = ((temp_data >> 16) & (0b0000011111100000)) >> 3;
                 b = ((temp_data >> 16) & (0b0000000000011111)) << 3;
-                y = FLOAT2FIX(0.2990f) * r + FLOAT2FIX(0.5870f) * g + FLOAT2FIX(0.1140f) * b - (128 << FIXQ);
-                y >>= FIXQ - 2;
+                y = FLOAT2FIX(0.2990f) * r + FLOAT2FIX(0.5870f) * g + FLOAT2FIX(0.1140f) * b;
+                y >>= FIXQ;
                 pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 0] = (ElementType)y;
                 if (LENGTH == 224)
                 {
                     r = ((temp_data) & (0b1111100000000000)) >> 8;
-                    g = ((temp_data) & (0b0000011111100000)) >> 2;
+                    g = ((temp_data) & (0b0000011111100000)) >> 3;
                     b = ((temp_data) & (0b0000000000011111)) << 3;
-                    y = FLOAT2FIX(0.2990f) * r + FLOAT2FIX(0.5870f) * g + FLOAT2FIX(0.1140f) * b - (128 << FIXQ);
-                    y >>= FIXQ - 2;
+                    y = FLOAT2FIX(0.2990f) * r + FLOAT2FIX(0.5870f) * g + FLOAT2FIX(0.1140f) * b;
+                    y >>= FIXQ;
                     pass_data[i * LENGTH * NCHANNEL + j * (LENGTH * NCHANNEL / 112) + 1] = (ElementType)y;
                 }
             }
