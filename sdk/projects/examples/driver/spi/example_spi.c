@@ -38,7 +38,7 @@ extern void mdelay(int32_t time);
 static spi_handle_t spi_t;
 static usart_handle_t uart_t;
 ElementType spi_img_data[TOTALBYTE] = {0};
-ElementType acc_result[5] = {0xFF,0xFF,0xFF,0xFF,0xFF};
+ElementType acc_result[5] = {0x0A,0x0A,0x0A,0x0A,0x0A};
 
 static void print_data(ElementType *data, uint16_t n)
 {
@@ -49,7 +49,7 @@ static void print_data(ElementType *data, uint16_t n)
         {
             printf("\r\n");
         }
-        printf("%x", data[j]);
+        printf("%02x", data[j]);
     }
     printf("\r\n");
 }
@@ -61,6 +61,14 @@ static ElementType TransType(int32_t pos)
     else if (pos > 224)
         return 224;
     return (ElementType)pos;
+}
+
+static ElementType XORCheck(ElementType* pass_data, uint32_t len){
+    ElementType res = pass_data[0];
+    for (int i = 1; i < len; i++){
+        res ^= pass_data[i];
+    }
+    return res;
 }
 
 #ifdef JPEGTEST
@@ -161,42 +169,40 @@ static void wujian100_spi_send()
 #endif
 
     // frame beginning
-    spi_single[NBYTE + CBYTE - 1] = 0xFF;
     memcpy(spi_single, acc_result, 5);
+    spi_single[NBYTE + CBYTE - 2] = 0xFF;
+    spi_single[NBYTE + CBYTE - 1] = XORCheck(spi_single, NBYTE + CBYTE - 1);
 
     csi_spi_ss_control(handle, SPI_SS_ACTIVE);
     ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+    print_data(spi_single, NBYTE + CBYTE);
 
     // frame
-    spi_single[NBYTE + CBYTE - 1] = 0xFE;
+    spi_single[NBYTE + CBYTE - 2] = 0x00;
     for (j = 0; j < (TOTALBYTE / NBYTE); j++)
     {
         memcpy(spi_single, spi_img_data + j * NBYTE, sizeof(ElementType) * NBYTE);
-        spi_single[NBYTE] = j % 0xFF;
+        spi_single[NBYTE] = j & 0xFF;
+        spi_single[NBYTE + CBYTE - 1] = XORCheck(spi_single, NBYTE + CBYTE - 1);
         // print_data(spi_single, NBYTE + 1);
         csi_spi_ss_control(handle, SPI_SS_ACTIVE);
         ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
+        // print_data(spi_single, NBYTE + CBYTE);
         for (i = 0; i < 0; i++)
         {
             csi_spi_ss_control(handle, SPI_SS_INACTIVE);
             csi_spi_ss_control(handle, SPI_SS_ACTIVE);
         }
         csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-        // if (j % 100 == 0)
-        //     mdelay(1);
         if (ret < 0)
         {
             printf("send fail\r\n");
             mdelay(10000);
         }
     }
-
-    // frame end
-    for (i = 0; i < NBYTE + CBYTE; i++)
-    {
-        spi_single[i] = 0xFD;
-    }
+    spi_single[NBYTE + CBYTE - 2] = 0xCC;
+    spi_single[NBYTE + CBYTE - 1] = XORCheck(spi_single, NBYTE + CBYTE - 1);
     csi_spi_ss_control(handle, SPI_SS_ACTIVE);
     ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
@@ -341,7 +347,7 @@ int main(void)
     printf("wujian100 startup!\n");
     wujian100_spi_init(SPI_IDX);
     wujian100_uart_init(UART_IDX);
-    wujian100_irq_init(43);
+    // wujian100_irq_init(43);
     t_main();
 
     // csi_kernel_init();

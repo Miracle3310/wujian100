@@ -2,8 +2,8 @@
 #define __params__
 #define ElementType uint8_t
 #define LENGTH 112 
-#define NBYTE 4
-#define CBYTE 2 // check byte
+#define NBYTE 8
+#define CBYTE 3 // check byte
 #define NCHANNEL 2
 #define TOTALBYTE (LENGTH * LENGTH * NCHANNEL)
 #endif
