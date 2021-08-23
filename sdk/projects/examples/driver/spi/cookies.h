@@ -10,7 +10,7 @@
 #define UART_IDX 2
 #define MY_SPI_CLK_RATE 8500000
 #define IRQ_ACC 43
-ElementType acc_result[5];
+uint8_t acc_result[5]; // first 4 bytes: coordinate; last byte: class
 
 // #define SPITEST
 

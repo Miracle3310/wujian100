@@ -45,10 +45,12 @@ int t_main(void)
         printf("%d\n", frame_num++);
         if (acc_done_flag){
             wujian100_get_acc_result();
-            drv_irq_enable(IRQ_ACC);
+        }
+        if ((frame_num & 0b1111) == 0) // 16 samples
+        {
+            wujian100_uart_send(acc_result[4]);
         }
         wujian100_spi_send();
-        // wujian100_uart_send();
         // mdelay(10);
     }
     return 0;

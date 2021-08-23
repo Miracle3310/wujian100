@@ -51,6 +51,7 @@ void wujian100_spi_send()
     int32_t ret;
     uint32_t i, j;
     ElementType spi_single[NBYTE + CBYTE] = {0};
+    static uint8_t frame_num = 0;
 
 #ifdef SPITEST
     Spidata_get(spi_img_data);
@@ -61,11 +62,12 @@ void wujian100_spi_send()
     // frame beginning
     memcpy(spi_single, acc_result, 5);
     spi_single[NBYTE + CBYTE - 2] = 0xFF;
+    spi_single[6] = frame_num++;
     spi_single[NBYTE + CBYTE - 1] = XORCheck(spi_single, NBYTE + CBYTE - 1);
 
     csi_spi_ss_control(handle, SPI_SS_ACTIVE);
     ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
-    csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+    // csi_spi_ss_control(handle, SPI_SS_INACTIVE);
     // print_data(spi_single, NBYTE + CBYTE);
 
     // frame
@@ -76,15 +78,15 @@ void wujian100_spi_send()
         spi_single[NBYTE] = j & 0xFF;
         spi_single[NBYTE + CBYTE - 1] = XORCheck(spi_single, NBYTE + CBYTE - 1);
         // print_data(spi_single, NBYTE + 1);
-        csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+        // csi_spi_ss_control(handle, SPI_SS_ACTIVE);
         ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
         // print_data(spi_single, NBYTE + CBYTE);
-        for (i = 0; i < 0; i++)
-        {
-            csi_spi_ss_control(handle, SPI_SS_INACTIVE);
-            csi_spi_ss_control(handle, SPI_SS_ACTIVE);
-        }
-        csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+        // for (i = 0; i < 0; i++)
+        // {
+        //     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
+        //     csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+        // }
+        // csi_spi_ss_control(handle, SPI_SS_INACTIVE);
         if (ret < 0)
         {
             printf("send fail\r\n");
@@ -93,7 +95,7 @@ void wujian100_spi_send()
     }
     spi_single[NBYTE + CBYTE - 2] = 0xCC;
     spi_single[NBYTE + CBYTE - 1] = XORCheck(spi_single, NBYTE + CBYTE - 1);
-    csi_spi_ss_control(handle, SPI_SS_ACTIVE);
+    // csi_spi_ss_control(handle, SPI_SS_ACTIVE);
     ret = csi_spi_send(spi_t, spi_single, NBYTE + CBYTE);
     csi_spi_ss_control(handle, SPI_SS_INACTIVE);
 }

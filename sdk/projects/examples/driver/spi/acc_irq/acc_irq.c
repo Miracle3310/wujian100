@@ -172,4 +172,5 @@ void wujian100_get_acc_result()
     acc_result[4] = (ElementType)select_result[6];
 
     acc_done_flag = 0;
+    drv_irq_enable(IRQ_ACC);
 }

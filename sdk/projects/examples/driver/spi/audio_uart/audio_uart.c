@@ -1,4 +1,17 @@
 #include "audio_uart.h"
+uint8_t audio_command[12][9] = {
+    {0X7E, 0X05, 0X41, 0X00, 0X01, 0X45, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X02, 0X46, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X03, 0X47, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X04, 0X40, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X05, 0X41, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X06, 0X42, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X07, 0X43, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X08, 0X4C, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X09, 0X4D, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X0A, 0X4E, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X0B, 0X4F, 0XEF, '\r','\n'},
+    {0X7E, 0X05, 0X41, 0X00, 0X0C, 0X48, 0XEF, '\r','\n'}};
 int32_t usart_send_async(usart_handle_t usart, const void *data, uint32_t num)
 {
     int time_out = 0x7ffff;
@@ -64,5 +77,10 @@ int wujian100_uart_init(int32_t idx)
 
 void wujian100_uart_send(uint8_t cls)
 {
-    usart_send_async(uart_t, audio_command[cls], sizeof(audio_command[cls]));
+    static uint8_t last_class;
+    if (last_class != cls)
+    {
+        last_class = cls;
+        usart_send_async(uart_t, audio_command[cls], sizeof(audio_command[cls]));
+    }
 }
