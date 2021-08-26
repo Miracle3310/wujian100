@@ -77,8 +77,8 @@ int wujian100_uart_init(int32_t idx)
 
 void wujian100_uart_send(uint8_t cls)
 {
-    static uint8_t last_class;
-    if (last_class != cls)
+    static uint8_t last_class = 255;
+    // if (last_class != cls)
     {
         last_class = cls;
         usart_send_async(uart_t, audio_command[cls], sizeof(audio_command[cls]));

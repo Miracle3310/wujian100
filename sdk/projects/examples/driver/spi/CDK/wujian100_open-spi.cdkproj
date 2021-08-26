@@ -922,7 +922,7 @@
     </BuildConfig>
   </BuildConfigs>
   <DebugSessions>
-    <watchExpressions/>
+    <watchExpressions>j:0</watchExpressions>
     <memoryExpressions>;;;</memoryExpressions>
     <statistics>;;MHZ;</statistics>
     <peripheralTabs/>

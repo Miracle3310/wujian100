@@ -46,7 +46,7 @@ int t_main(void)
         if (acc_done_flag){
             wujian100_get_acc_result();
         }
-        if ((frame_num & 0b1111) == 0) // 16 samples
+        if ((frame_num & 0b11111) == 0) // 16 samples
         {
             wujian100_uart_send(acc_result[4]);
         }
