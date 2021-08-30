@@ -87,7 +87,7 @@ void Videopass_get(ElementType *pass_data)
                 temp_data = VIDEO->OR;
                 for (k = 0; k < (LENGTH / 56); k++)
                 {
-                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> 8 * (3 - k));
+                    pass_data[i * LENGTH * NCHANNEL + j * (LENGTH / 56) + k] = (temp_data >> 8 * (3 - k)) & 0xFF;
                 }
             }
         }
